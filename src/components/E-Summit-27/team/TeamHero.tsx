@@ -1,8 +1,18 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import { observeMotionActivity } from "../motionActivity";
 import { asset } from "@/context/E-Summit-27/constants";
 
 export default function TeamHero() {
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    return observeMotionActivity(el, (active) => { el.dataset.motionPaused = String(!active); });
+  }, []);
   return (
-    <section aria-labelledby="e27t-hero-title" className="e27t-hero px-4 pb-20 pt-28 sm:px-6 sm:pb-28 lg:px-8">
+    <section ref={ref} aria-labelledby="e27t-hero-title" className="e27t-hero px-4 pb-20 pt-28 sm:px-6 sm:pb-28 lg:px-8">
       {/* static CSS composition — no canvas */}
       <div className="e27t-hero-glow" aria-hidden="true" />
       <div

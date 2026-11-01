@@ -67,7 +67,7 @@ export default function DepartmentGrid({ groups }: Props) {
 
       <div className="mx-auto max-w-7xl space-y-14 px-4 pt-10 sm:px-6 lg:px-8">
         {visible.map((g) => (
-          // One Reveal per department block (not per card) keeps framer-motion instances low.
+          // One Reveal per department block (not per card) keeps observer count low.
           <Reveal key={g.id}>
             <div aria-labelledby={`e27t-dept-${g.id}`} role="group">
               <div className={active === "all" ? "mb-6 flex items-baseline gap-3" : "sr-only"}>

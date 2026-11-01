@@ -401,3 +401,28 @@
     transition: none !important;
   }
 }
+/* Decorative loops sleep while off-screen or in a background tab. */
+.e27-hero[data-motion-paused="true"] .e27-floor-track,
+.e27-hero[data-motion-paused="true"] .e27-flame-float,
+.e27t-hero[data-motion-paused="true"] .e27t-hero-flame {
+  animation-play-state: paused;
+}
+
+.e27-reveal {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: var(--e27-reveal-delay, 0s);
+}
+.e27-reveal[data-reveal-pending="true"] {
+  opacity: 0;
+  transform: translateY(var(--e27-reveal-y, 24px));
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .e27-reveal, .e27-reveal[data-reveal-pending="true"] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

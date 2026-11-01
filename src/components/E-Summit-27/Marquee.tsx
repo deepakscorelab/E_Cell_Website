@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import type { CSSProperties, ReactNode } from "react";
+import { observeMotionActivity } from "./motionActivity";
 
 type MarqueeProps = {
   children: ReactNode;
@@ -19,14 +20,13 @@ type MarqueeProps = {
  */
 export default function Marquee({ children, duration = 40, reverse = false, className = "", label }: MarqueeProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [paused, setPaused] = useState(true);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const io = new IntersectionObserver(([e]) => setPaused(!e.isIntersecting), { rootMargin: "100px" });
-    io.observe(el);
-    return () => io.disconnect();
+    return observeMotionActivity(el, (active) => {
+      el.dataset.paused = String(!active);
+    }, "100px");
   }, []);
 
   return (
@@ -34,7 +34,7 @@ export default function Marquee({ children, duration = 40, reverse = false, clas
       ref={ref}
       role="region"
       aria-label={label}
-      data-paused={paused}
+      data-paused="true"
       className={`e27-marquee ${reverse ? "e27-marquee--reverse" : ""} ${className}`}
       style={{ "--e27-marquee-dur": `${duration}s` } as CSSProperties}
     >

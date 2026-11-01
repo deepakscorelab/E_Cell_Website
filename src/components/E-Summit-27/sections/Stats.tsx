@@ -1,16 +1,9 @@
-"use client";
-
-import CountUp from "react-countup";
-import { useInView } from "react-intersection-observer";
-import { useReducedMotion } from "framer-motion";
+import AnimatedNumbers from "../AnimatedNumbers";
 import { STATS } from "@/context/E-Summit-27/homeData";
 
 const fmt = (n: number) => Math.round(n).toLocaleString("en-IN"); // 2,50,000 style
 
 export default function Stats() {
-  const { ref, inView } = useInView({ triggerOnce: true, rootMargin: "-80px" });
-  const reduce = useReducedMotion();
-
   return (
     <section
       aria-labelledby="e27-stats-title"
@@ -22,7 +15,7 @@ export default function Stats() {
           Our reach in <span className="text-white">all means</span>
         </h2>
 
-        <ul ref={ref} className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5 lg:gap-5">
+        <AnimatedNumbers className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5 lg:gap-5">
           {STATS.map((s, i) => (
             <li
               key={s.label}
@@ -31,11 +24,8 @@ export default function Stats() {
               }`}
             >
               <span className="font-[family-name:var(--e27-font-heading)] text-4xl text-white sm:text-5xl">
-                {inView && !reduce ? (
-                  <CountUp end={s.value} duration={2} formattingFn={fmt} />
-                ) : (
-                  <span>{inView || reduce ? fmt(s.value) : "0"}</span>
-                )}
+                <span className="sr-only">{fmt(s.value)}</span>
+                <span data-count-to={s.value} aria-hidden="true">{fmt(s.value)}</span>
                 <span className="e27-accent">{s.suffix}</span>
               </span>
               <span className="mt-3 text-xs font-medium uppercase tracking-[0.2em] text-[var(--e27-muted)]">
@@ -43,7 +33,7 @@ export default function Stats() {
               </span>
             </li>
           ))}
-        </ul>
+        </AnimatedNumbers>
       </div>
     </section>
   );

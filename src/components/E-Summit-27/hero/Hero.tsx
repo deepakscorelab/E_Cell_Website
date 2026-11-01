@@ -5,6 +5,8 @@ import type { CSSProperties } from "react";
 import Link from "next/link";
 import { CalendarDays, MapPin, ArrowRight } from "lucide-react";
 import FireCanvasLoader from "./FireCanvasLoader";
+import { observeMotionActivity } from "../motionActivity";
+import { FrameClock } from "./firePerformance";
 import type { PointerTarget } from "./FireCanvas";
 import {
   BASE,
@@ -23,14 +25,6 @@ function canRunCanvas(): boolean {
   const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
   if (nav.connection?.saveData) return false;
   if ((navigator.hardwareConcurrency ?? 4) <= 2) return false;
-  try {
-    const c = document.createElement("canvas");
-    const gl = c.getContext("webgl2");
-    if (!gl) return false;
-    gl.getExtension("WEBGL_lose_context")?.loseContext(); // free the probe context immediately
-  } catch {
-    return false;
-  }
   return true;
 }
 
@@ -42,102 +36,131 @@ export default function Hero() {
   const [canvasOn, setCanvasOn] = useState(false);
   const [canvasReady, setCanvasReady] = useState(false);
   const [mobile, setMobile] = useState(false);
+  const canvasFailed = useRef(false);
 
-  /* ---- mount the canvas after first paint, only if allowed ---- */
-  useEffect(() => {
-    if (!canRunCanvas()) return;
-    setMobile(window.matchMedia("(pointer: coarse), (max-width: 767px)").matches);
-
-    type IdleWin = Window & {
-      requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number;
-      cancelIdleCallback?: (id: number) => void;
-    };
-    const w = window as IdleWin;
-    let idleId = 0;
-    let timeoutId = 0;
-    const mount = () => setCanvasOn(true);
-    if (w.requestIdleCallback) idleId = w.requestIdleCallback(mount, { timeout: 2000 });
-    else timeoutId = window.setTimeout(mount, 1200);
-    return () => {
-      if (idleId && w.cancelIdleCallback) w.cancelIdleCallback(idleId);
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, []);
-
-  /* ---- pointer parallax → --px/--py CSS vars (rAF-throttled, lerped) ---- */
+  /* Let the CSS entry sequence finish before downloading / compiling WebGL. */
   useEffect(() => {
     const hero = heroRef.current;
     if (!hero) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const deadline = performance.now() + 2000;
+    let idleId = 0;
+    let timeoutId = 0;
+    let active = false;
+    let mounted = false;
+    const cancel = () => {
+      clearTimeout(timeoutId);
+      if (idleId) window.cancelIdleCallback?.(idleId);
+      timeoutId = idleId = 0;
+    };
+    const mount = () => {
+      idleId = 0;
+      if (!active || mounted || canvasFailed.current || !canRunCanvas()) return;
+      mounted = true;
+      setMobile(window.matchMedia("(pointer: coarse), (max-width: 767px)").matches);
+      setCanvasOn(true);
+    };
+    const stopObserving = observeMotionActivity(hero, (next) => {
+      active = next;
+      cancel();
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        mounted = false;
+        setCanvasOn(false);
+        setCanvasReady(false);
+      }
+      if (!active || mounted || canvasFailed.current || !canRunCanvas()) return;
+      timeoutId = window.setTimeout(() => {
+        timeoutId = 0;
+        if (window.requestIdleCallback) idleId = window.requestIdleCallback(mount, { timeout: 1000 });
+        else mount();
+      }, Math.max(0, deadline - performance.now()));
+    });
+    return () => { cancel(); stopObserving(); };
+  }, []);
 
+  /* Sleep completely off-screen; pointer events only record the latest position. */
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero) return;
     const coarse = window.matchMedia("(pointer: coarse)").matches;
+    const clock = new FrameClock(coarse ? 30 : 60);
     const cur = { x: 0, y: 0 };
     let raf = 0;
-    let inView = true;
-
+    let active = false;
+    let time = 0;
+    let pending: { x: number; y: number } | null = null;
     const write = () => {
       hero.style.setProperty("--px", cur.x.toFixed(3));
       hero.style.setProperty("--py", cur.y.toFixed(3));
     };
-
-    if (coarse) {
-      // Touch: slow auto-drift, ~30 fps, only while the hero is visible.
-      let t = 0;
-      let frame = 0;
-      const drift = () => {
-        raf = requestAnimationFrame(drift);
-        if (!inView || document.hidden || ++frame % 2) return;
-        t += 0.033;
-        cur.x = Math.sin(t * 0.35) * 0.5;
-        cur.y = Math.cos(t * 0.27) * 0.35;
+    const step = (now: number) => {
+      raf = 0;
+      if (!active) return;
+      const raw = clock.advance(now);
+      if (raw === null) { raf = requestAnimationFrame(step); return; }
+      const dt = Math.min(raw, 50);
+      if (coarse) {
+        time += dt / 1000;
+        cur.x = Math.sin(time * 0.35) * 0.5;
+        cur.y = Math.cos(time * 0.27) * 0.35;
         pointer.current.x = cur.x;
         pointer.current.y = cur.y;
-        write();
-      };
-      const io = new IntersectionObserver(([e]) => (inView = e.isIntersecting));
-      io.observe(hero);
-      raf = requestAnimationFrame(drift);
-      return () => {
-        cancelAnimationFrame(raf);
-        io.disconnect();
-      };
-    }
-
-    // Mouse: the loop only runs until values settle, then sleeps.
-    const step = () => {
-      const tx = pointer.current.x;
-      const ty = pointer.current.y;
-      cur.x += (tx - cur.x) * 0.08;
-      cur.y += (ty - cur.y) * 0.08;
-      write();
-      if (Math.abs(tx - cur.x) > 0.001 || Math.abs(ty - cur.y) > 0.001) {
-        raf = requestAnimationFrame(step);
       } else {
-        raf = 0;
+        if (pending) {
+          const r = hero.getBoundingClientRect();
+          pointer.current.x = ((pending.x - r.left) / Math.max(1, r.width)) * 2 - 1;
+          pointer.current.y = ((pending.y - r.top) / Math.max(1, r.height)) * 2 - 1;
+          pending = null;
+        }
+        const k = 1 - Math.exp(-dt / 200);
+        cur.x += (pointer.current.x - cur.x) * k;
+        cur.y += (pointer.current.y - cur.y) * k;
+      }
+      write();
+      if (coarse || Math.abs(pointer.current.x - cur.x) > 0.001 || Math.abs(pointer.current.y - cur.y) > 0.001) {
+        raf = requestAnimationFrame(step);
       }
     };
-    const onMove = (e: PointerEvent) => {
-      const r = hero.getBoundingClientRect();
-      pointer.current.x = ((e.clientX - r.left) / r.width) * 2 - 1;
-      pointer.current.y = ((e.clientY - r.top) / r.height) * 2 - 1;
-      if (!raf) raf = requestAnimationFrame(step);
+    const wake = () => {
+      if (active && !raf) { clock.reset(); raf = requestAnimationFrame(step); }
+    };
+    const stopObserving = observeMotionActivity(hero, (next) => {
+      active = next;
+      hero.dataset.motionPaused = String(!active);
+      if (active) wake();
+      else {
+        cancelAnimationFrame(raf);
+        raf = 0;
+        pending = null;
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          pointer.current.x = pointer.current.y = cur.x = cur.y = 0;
+          write();
+        }
+      }
+    });
+    const onMove = (event: PointerEvent) => {
+      if (coarse || !active) return;
+      pending = { x: event.clientX, y: event.clientY };
+      wake();
     };
     const onLeave = () => {
-      pointer.current.x = 0;
-      pointer.current.y = 0;
-      if (!raf) raf = requestAnimationFrame(step);
+      if (coarse) return;
+      pending = null;
+      pointer.current.x = pointer.current.y = 0;
+      wake();
     };
     hero.addEventListener("pointermove", onMove, { passive: true });
     hero.addEventListener("pointerleave", onLeave);
     return () => {
+      stopObserving();
       hero.removeEventListener("pointermove", onMove);
       hero.removeEventListener("pointerleave", onLeave);
-      if (raf) cancelAnimationFrame(raf);
+      cancelAnimationFrame(raf);
     };
   }, []);
 
   const handleReady = useCallback(() => setCanvasReady(true), []);
   const handleDisable = useCallback(() => {
+    canvasFailed.current = true;
     setCanvasReady(false);
     setCanvasOn(false); // unmount → full dispose; static poster remains
   }, []);

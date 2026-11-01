@@ -11,29 +11,10 @@ import type { RefObject } from "react";
 import * as THREE from "three";
 import { EMBER_FRAG, EMBER_VERT, FIRE_FRAG, FIRE_VERT, SHARD_FRAG, SHARD_VERT } from "./fire.glsl";
 
-/* ------------------------------------------------------------------ */
-/* QUALITY TIERS — tune here.                                          */
-/* octaves:     fbm octaves in the fire shader (biggest GPU cost)       */
-/* embers:      number of ember points drawn                            */
-/* shards:      instanced glass shards (0 = off)                        */
-/* renderScale: fraction of CSS px × dpr actually rendered; CSS upscales*/
-/* ------------------------------------------------------------------ */
-const QUALITY = [
-  { name: "high", octaves: 4, embers: 1000, shards: 32, renderScale: 0.75 }, // desktop start
-  { name: "medium", octaves: 3, embers: 550, shards: 16, renderScale: 0.6 },
-  { name: "low", octaves: 3, embers: 260, shards: 0, renderScale: 0.5 }, // mobile start
-  { name: "minimal", octaves: 2, embers: 150, shards: 0, renderScale: 0.45 },
-] as const;
+import { FireQuality, FrameClock, firePixelRatio, QUALITY } from "./firePerformance";
+import { observeMotionActivity } from "../motionActivity";
 
-const DESKTOP_START_TIER = 0;
-const MOBILE_START_TIER = 2;
-const MAX_DROPS = 2; // 1st drop = next tier, 2nd drop = disable canvas (static poster stays)
-const SLOW_FRAME_MS = 22; // average frame time above this → too slow
-const SAMPLE_FRAMES = 60;
-const WARMUP_FRAMES = 15; // ignore shader-compile / first-upload frames
-const MAX_DELTA_MS = 50; // clamp delta so animation never jumps after a hitch
-const MAX_EMBERS = QUALITY[0].embers;
-const MAX_SHARDS = QUALITY[0].shards;
+const MAX_DELTA_MS = 50;
 
 export type PointerTarget = { x: number; y: number };
 
@@ -89,9 +70,10 @@ export default function FireCanvas({ pointer, mobile, onReady, onDisable }: Fire
     canvas.setAttribute("aria-hidden", "true");
     host.appendChild(canvas);
 
-    const dpr = mobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
-    let tier = mobile ? MOBILE_START_TIER : DESKTOP_START_TIER;
-    let drops = 0;
+    const quality = new FireQuality(mobile);
+    const clock = new FrameClock(mobile ? 30 : 60);
+    const maxEmbers = QUALITY[quality.tier].embers;
+    const maxShards = QUALITY[quality.tier].shards;
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 50);
@@ -114,7 +96,7 @@ export default function FireCanvas({ pointer, mobile, onReady, onDisable }: Fire
         uTime: { value: 0 },
         uResolution: { value: new THREE.Vector2(1, 1) },
         uPointer: { value: new THREE.Vector2(0, 0) },
-        uQuality: { value: QUALITY[tier].octaves },
+        uQuality: { value: QUALITY[quality.tier].octaves },
       },
       ...additive,
     });
@@ -125,9 +107,9 @@ export default function FireCanvas({ pointer, mobile, onReady, onDisable }: Fire
 
     /* ---------------- embers (allocated once at max, drawRange per tier) ---------------- */
     const rand = mulberry32(27);
-    const emberPos = new Float32Array(MAX_EMBERS * 3);
-    const emberSeed = new Float32Array(MAX_EMBERS);
-    for (let i = 0; i < MAX_EMBERS; i++) {
+    const emberPos = new Float32Array(maxEmbers * 3);
+    const emberSeed = new Float32Array(maxEmbers);
+    for (let i = 0; i < maxEmbers; i++) {
       emberPos[i * 3] = rand();
       emberPos[i * 3 + 1] = rand();
       emberPos[i * 3 + 2] = rand();
@@ -155,7 +137,7 @@ export default function FireCanvas({ pointer, mobile, onReady, onDisable }: Fire
     /* ---------------- shards (InstancedMesh, matrices set once) ---------------- */
     const shardGeo = new THREE.OctahedronGeometry(1, 0);
     shardGeo.scale(0.45, 1, 0.45); // elongated "petal" / crystal shape
-    const spin = new Float32Array(MAX_SHARDS * 4);
+    const spin = new Float32Array(maxShards * 4);
     const shardMat = new THREE.ShaderMaterial({
       vertexShader: SHARD_VERT,
       fragmentShader: SHARD_FRAG,
@@ -165,10 +147,10 @@ export default function FireCanvas({ pointer, mobile, onReady, onDisable }: Fire
       },
       ...additive,
     });
-    const shards = new THREE.InstancedMesh(shardGeo, shardMat, MAX_SHARDS);
+    const shards = new THREE.InstancedMesh(shardGeo, shardMat, maxShards);
     {
       const tmp = new THREE.Object3D(); // init-time only
-      for (let i = 0; i < MAX_SHARDS; i++) {
+      for (let i = 0; i < maxShards; i++) {
         const z = -4 - rand() * 7; // depth -4…-11
         const side = i % 2 === 0 ? -1 : 1; // keep the centre (logo) clear
         tmp.position.set(side * (1.6 + rand() * 4.5), -1.2 + rand() * 4, z);
@@ -185,14 +167,17 @@ export default function FireCanvas({ pointer, mobile, onReady, onDisable }: Fire
     shardGeo.setAttribute("aSpin", new THREE.InstancedBufferAttribute(spin, 4));
     shards.frustumCulled = false;
     shards.renderOrder = 1;
-    scene.add(shards);
+    if (maxShards > 0) scene.add(shards);
 
     /* ---------------- sizing ---------------- */
     const bufSize = new THREE.Vector2(); // reused, no per-frame allocation
     const resize = () => {
       const w = Math.max(1, host.clientWidth);
       const h = Math.max(1, host.clientHeight);
-      const pr = dpr * QUALITY[tier].renderScale;
+      const pr = Math.min(
+        firePixelRatio(w, h, window.devicePixelRatio, quality.tier, mobile),
+        renderer.capabilities.maxTextureSize / Math.max(w, h),
+      );
       renderer.setPixelRatio(pr);
       renderer.setSize(w, h, false); // false: CSS keeps 100% → browser upscales
       renderer.getDrawingBufferSize(bufSize);
@@ -203,7 +188,7 @@ export default function FireCanvas({ pointer, mobile, onReady, onDisable }: Fire
     };
 
     const applyTier = () => {
-      const q = QUALITY[tier];
+      const q = QUALITY[quality.tier];
       fireMat.uniforms.uQuality.value = q.octaves;
       emberGeo.setDrawRange(0, q.embers);
       shards.count = q.shards;
@@ -215,27 +200,16 @@ export default function FireCanvas({ pointer, mobile, onReady, onDisable }: Fire
     /* ---------------- loop ---------------- */
     let raf = 0;
     let running = false;
-    let inView = true;
-    let last = 0;
+    let active = false;
+    let disabled = false;
     let elapsed = 0;
     let readySent = false;
-    // adaptive-quality sampling
-    let measuring = true;
-    let frameNo = 0;
-    let sampleSum = 0;
-    let sampleCount = 0;
     const ptr = fireMat.uniforms.uPointer.value as THREE.Vector2;
-
-    const resetSample = () => {
-      frameNo = 0;
-      sampleSum = 0;
-      sampleCount = 0;
-    };
 
     const tick = (now: number) => {
       raf = requestAnimationFrame(tick);
-      const raw = last ? now - last : 16.7;
-      last = now;
+      const raw = clock.advance(now);
+      if (raw === null) return;
       const dt = Math.min(raw, MAX_DELTA_MS);
       elapsed += dt / 1000;
 
@@ -256,37 +230,21 @@ export default function FireCanvas({ pointer, mobile, onReady, onDisable }: Fire
         cbRef.current.onReady();
       }
 
-      // Adaptive quality: average the raw frame time over SAMPLE_FRAMES after warm-up.
-      if (measuring) {
-        frameNo++;
-        if (frameNo > WARMUP_FRAMES) {
-          sampleSum += Math.min(raw, 100); // ignore huge outliers (tab switch)
-          sampleCount++;
-          if (sampleCount >= SAMPLE_FRAMES) {
-            const avg = sampleSum / sampleCount;
-            if (avg > SLOW_FRAME_MS) {
-              drops++;
-              if (drops >= MAX_DROPS || tier >= QUALITY.length - 1) {
-                stop();
-                cbRef.current.onDisable(); // keep static poster only
-                return;
-              }
-              tier++;
-              applyTier();
-              resetSample(); // re-measure on the new tier
-            } else {
-              measuring = false; // this tier is fine → stop measuring
-            }
-          }
-        }
+      const action = quality.sample(raw);
+      if (action === "disable") {
+        disabled = true;
+        stop();
+        cbRef.current.onDisable();
+      } else if (action === "lower") {
+        applyTier();
       }
     };
 
     function start() {
-      if (running || !inView || document.hidden) return;
+      if (running || !active || disabled) return;
       running = true;
-      last = 0;
-      if (measuring) resetSample();
+      clock.reset();
+      quality.reset();
       raf = requestAnimationFrame(tick);
     }
     function stop() {
@@ -296,18 +254,11 @@ export default function FireCanvas({ pointer, mobile, onReady, onDisable }: Fire
     }
 
     /* ---------------- pause when off-screen / tab hidden ---------------- */
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        inView = entry.isIntersecting;
-        if (inView) start();
-        else stop();
-      },
-      { threshold: 0 },
-    );
-    io.observe(host);
-
-    const onVisibility = () => (document.hidden ? stop() : start());
-    document.addEventListener("visibilitychange", onVisibility);
+    const stopObserving = observeMotionActivity(host, (next) => {
+      active = next;
+      if (active) start();
+      else stop();
+    });
 
     let resizeRaf = 0;
     const ro = new ResizeObserver(() => {
@@ -318,6 +269,7 @@ export default function FireCanvas({ pointer, mobile, onReady, onDisable }: Fire
 
     const onContextLost = (e: Event) => {
       e.preventDefault();
+      disabled = true;
       stop();
       cbRef.current.onDisable();
     };
@@ -329,9 +281,8 @@ export default function FireCanvas({ pointer, mobile, onReady, onDisable }: Fire
     return () => {
       stop();
       if (resizeRaf) cancelAnimationFrame(resizeRaf);
-      io.disconnect();
+      stopObserving();
       ro.disconnect();
-      document.removeEventListener("visibilitychange", onVisibility);
       canvas.removeEventListener("webglcontextlost", onContextLost);
       fireGeo.dispose();
       fireMat.dispose();

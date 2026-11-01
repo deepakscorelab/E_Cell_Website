@@ -10,7 +10,7 @@ const T = {
   ATOMS         : 3200,  // particles gather to corners → atoms form (short)
   ELECTRIC      : 3400,  // electric arcs fire from corners to centre
   LOGO          : 4200,  // logo fades in
-  DONE          : 4250,  // 50ms after logo → onComplete fires
+  DONE          : 5200,  // preserve the existing one-second logo hold
 };
 
 export default function ProtonLoader({ onComplete }) {
@@ -24,6 +24,12 @@ export default function ProtonLoader({ onComplete }) {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
+    if (!ctx || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      onCompleteRef.current?.();
+      return;
+    }
+    let disposed = false;
+    let hiddenAt = document.hidden ? performance.now() : null;
 
     // ── math helpers ─────────────────────────────────────────────────────────
     const lerp      = (a, b, t) => a + (b - a) * t;
@@ -101,8 +107,6 @@ export default function ProtonLoader({ onComplete }) {
         cornerElAngles:corners.map(()=>ELECTRONS.map(e=>e.phase)),
         protonX:-50, protonY:CY,
         expParticles,
-        groundLetters:[],
-        groundTextFired:false,
         logoFired:false,
         logoAppearTime:null,
         logoImage:null,
@@ -118,9 +122,13 @@ export default function ProtonLoader({ onComplete }) {
 
       // preload logo
       const img = new Image();
-      img.src = "E-Summit Logo.png";
-      img.onload = () => { stateRef.current.logoImage = img; };
+      // The reverse proxy serves production assets below /e-cell.
+      img.src = `${window.location.pathname.startsWith("/e-cell/") ? "/e-cell" : ""}/E-Summit%20Logo.png`;
       stateRef.current.logoImage = img;
+      const background = ctx.createRadialGradient(CX,CY,10,CX,CY,Math.max(W,H)*0.75);
+      background.addColorStop(0,"rgba(0,20,45,0.97)");
+      background.addColorStop(1,"rgba(0,5,15,0.99)");
+      stateRef.current.background = background;
     }
 
     // ── draw helpers ─────────────────────────────────────────────────────────
@@ -213,18 +221,18 @@ export default function ProtonLoader({ onComplete }) {
 
     // ── main frame ────────────────────────────────────────────────────────────
     function frame(now) {
+      rafRef.current = null;
+      if (disposed || document.hidden) return;
       const s=stateRef.current;
-      const dt=(now-s.lastNow)/1000; s.lastNow=now;
+      const dt=Math.min((now-s.lastNow)/1000, 0.05); s.lastNow=now;
+      const step = dt * 60;
       const el=now-s.startTime;
       const {W,H,CX,CY,corners}=s;
 
       ctx.clearRect(0,0,W,H);
 
       // background
-      const bgr=ctx.createRadialGradient(CX,CY,10,CX,CY,Math.max(W,H)*0.75);
-      bgr.addColorStop(0,"rgba(0,20,45,0.97)");
-      bgr.addColorStop(1,"rgba(0,5,15,0.99)");
-      ctx.fillStyle=bgr; ctx.fillRect(0,0,W,H);
+      ctx.fillStyle=s.background; ctx.fillRect(0,0,W,H);
 
       // stars
       s.stars.forEach(st=>{
@@ -238,7 +246,7 @@ export default function ProtonLoader({ onComplete }) {
       if (el<T.COLLISION) {
         const t=clamp(el/T.PROTON_TRAVEL,0,1);
         s.protonX=lerp(-50,CX,easeInOut(t)); s.protonY=CY;
-        ELECTRONS.forEach((e,i)=>{s.electronAngles[i]+=e.speed;});
+        ELECTRONS.forEach((e,i)=>{s.electronAngles[i]+=e.speed*step;});
         drawCentralAtom(CX,CY,s.electronAngles);
         const tr=ctx.createLinearGradient(-50,CY,s.protonX,CY);
         tr.addColorStop(0,"rgba(0,110,255,0)"); tr.addColorStop(1,"rgba(100,210,255,.55)");
@@ -267,8 +275,7 @@ export default function ProtonLoader({ onComplete }) {
 
         s.expParticles.forEach(p=>{
           if (scatterT<1) {
-            p.x+=p.vx*1.4; p.y+=p.vy*1.4; p.vy+=0.09;
-            if(!p.scatterSet && scatterT>0.4){p.scatterX=p.x;p.scatterY=p.y;p.scatterSet=true;}
+            p.x+=p.vx*1.4*step; p.y+=p.vy*1.4*step; p.vy+=0.09*step;
             p.alpha=clamp(1-scatterT*0.3,0,1);
           } else {
             if(!p.scatterSet){p.scatterX=p.x;p.scatterY=p.y;p.scatterSet=true;}
@@ -287,28 +294,12 @@ export default function ProtonLoader({ onComplete }) {
         });
       }
 
-      // ── PHASE 4: corner atoms appear ────────────────────────────────────
-      if (el>=T.GATHER) {
-        const atomT=clamp((el-T.GATHER)/(T.ATOMS-T.GATHER),0,1);
-        const alpha=easeOut3(atomT);
-        s.cornerElAngles.forEach((angs,ci)=>{
-          ELECTRONS.forEach((e,i)=>{angs[i]+=e.speed*1.2;});
-          drawCornerAtom(corners[ci].x,corners[ci].y,alpha,angs);
-        });
-      }
-
       // ── PHASE 5: electric arcs fire ─────────────────────────────────────
       if (el>=T.ELECTRIC) {
         s.elecTime+=dt;
         const arcT=clamp((el-T.ELECTRIC)/(T.LOGO-T.ELECTRIC),0,1);
         const flicker=0.55+Math.sin(s.elecTime*4.5)*0.25+Math.random()*0.08;
         const arcAlpha = el<T.LOGO ? flicker*arcT : (0.25+Math.sin(s.elecTime*3)*0.1)*0.4;
-
-        // keep drawing corner atoms on top of arcs
-        s.cornerElAngles.forEach((angs,ci)=>{
-          ELECTRONS.forEach((e,i)=>{angs[i]+=e.speed*1.2;});
-          drawCornerAtom(corners[ci].x,corners[ci].y,1,angs);
-        });
 
         // centre energy glow
         const cg=ctx.createRadialGradient(CX,CY,0,CX,CY,130);
@@ -319,6 +310,15 @@ export default function ProtonLoader({ onComplete }) {
 
         corners.forEach((c,i)=>{
           drawElectricArc(c.x,c.y,CX,CY,i*3.7+1.2,s.elecTime,arcAlpha);
+        });
+      }
+
+      // Draw/update each corner atom once, above the electric arcs.
+      if (el>=T.GATHER) {
+        const alpha=easeOut3(clamp((el-T.GATHER)/(T.ATOMS-T.GATHER),0,1));
+        s.cornerElAngles.forEach((angs,ci)=>{
+          ELECTRONS.forEach((e,i)=>{angs[i]+=e.speed*1.2*step;});
+          drawCornerAtom(corners[ci].x,corners[ci].y,alpha,angs);
         });
       }
 
@@ -335,7 +335,7 @@ export default function ProtonLoader({ onComplete }) {
         ctx.fillStyle=cg2; ctx.fillRect(0,0,W,H);
 
         // draw logo image centred
-        if(s.logoImage && s.logoImage.complete){
+        if(s.logoImage && s.logoImage.complete && s.logoImage.naturalWidth > 0){
           const maxW=Math.min(W*0.55, 420);
           const scale2=maxW/s.logoImage.naturalWidth;
           const lw=s.logoImage.naturalWidth*scale2;
@@ -347,18 +347,37 @@ export default function ProtonLoader({ onComplete }) {
         }
       }
 
-      // done — 50ms after logo appears
-      if(!s.doneCalled && s.logoAppearTime && (now-s.logoAppearTime)>=1000){
+      // Leave the final frame visible during the CSS exit; stop drawing.
+      if(!s.doneCalled && el>=T.DONE){
         s.doneCalled=true;
         onCompleteRef.current?.();
+        return;
       }
 
       rafRef.current=requestAnimationFrame(frame);
     }
 
     initState();
-    rafRef.current=requestAnimationFrame(frame);
-    return ()=>{if(rafRef.current) cancelAnimationFrame(rafRef.current);};
+    const onVisibility = () => {
+      if (document.hidden) {
+        hiddenAt = performance.now();
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      } else {
+        const now = performance.now();
+        if (hiddenAt !== null) stateRef.current.startTime += now - hiddenAt;
+        hiddenAt = null;
+        stateRef.current.lastNow = now;
+        if (!stateRef.current.doneCalled && !rafRef.current) rafRef.current=requestAnimationFrame(frame);
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    if (!document.hidden) rafRef.current=requestAnimationFrame(frame);
+    return ()=>{
+      disposed = true;
+      if(rafRef.current) cancelAnimationFrame(rafRef.current);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   },[]);
 
   return (

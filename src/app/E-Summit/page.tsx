@@ -1,27 +1,20 @@
 "use client";
-import { useEffect, useState } from "react";
-import { motion, useTransform, useScroll, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { EncryptedText } from "@/components/ui/encrypted-text";
-import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
-import { galleryImages1 } from "@/context/galleryImages";
 import { SpeakersListCards } from "@/components/E-Summit/speakerCard";
 import { pastSpeakers } from "@/context/E-Summit/speakersData"
 
-import StartupExpoCard from '@/components/E-Summit/StartupExpoCard';
-import AccommodationForm from '@/components/E-Summit/AccommodationForm';
-import { allEvents, startupExpoData } from '@/context/E-Summit/dataObjects';
+import { allEvents } from '@/context/E-Summit/dataObjects';
 import { Calendar, MapPin, Users } from "lucide-react";
 import EventCard from "@/components/E-Summit/EventCard";
 import { useRouter } from "next/navigation";
-import Antigravity from "@/components/Antigravity"
 import ParticleBackground from "@/components/E-Summit/ParticleBackground"
 import ProtonLoader from "@/components/E-Summit/ProtonLoader";
-import ShinyText from '@/components/ShinyText';
 
 import { Montserrat } from "next/font/google";
 
 import { Playfair_Display } from 'next/font/google'
-import HeroSectionBackground from "@/components/E-Summit/HeroSectionBackground"
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -49,49 +42,12 @@ const viga = Viga({
 });
 
 export default function ESummitPage() {
-  const { scrollY } = useScroll();
-  const [scrollRange, setScrollRange] = useState(1); // avoid division by zero
   const [loading, setLoading] = useState(true);
+  const [introExited, setIntroExited] = useState(false);
   const router = useRouter()
 
   const imageName = 'https://res.cloudinary.com/doxe1rjaj/image/upload/v1774327559/spiral_image_he2mhi.png';
 
-
-  useEffect(() => {
-    function updateScrollRange() {
-      const scrollHeight = document.documentElement.scrollHeight;
-      const innerHeight = window.innerHeight;
-      setScrollRange(scrollHeight - innerHeight);
-    }
-
-    updateScrollRange();
-    window.addEventListener("resize", updateScrollRange);
-    return () => window.removeEventListener("resize", updateScrollRange);
-  }, []);
-
-  // Calculate scroll progress as 0 → 1 across the full scrollable height
-  const scrollProgress = useTransform(scrollY, [0, scrollRange], [0, 1], {
-    clamp: true,
-  });
-
-  // Map scroll progress 0 → 1 to scale 1 → 1.5
-  const scale = useTransform(scrollProgress, [0, 1], [1, 1.5]);
-
-  const hoverCard = {
-    initial: {
-      scale: 1,
-      y: 0,
-    },
-    hover: {
-      scale: 1.08,
-      y: -6,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 18,
-      },
-    },
-  };
 
   const hoverIcon = {
     initial: { rotate: 0, scale: 1 },
@@ -114,7 +70,7 @@ export default function ESummitPage() {
   return (
     <>
       {/* ── Full-screen loader — sits above everything, unmounts when done ── */}
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={() => setIntroExited(true)}>
         {loading && (
           <motion.div
             key="loader"
@@ -138,7 +94,7 @@ export default function ESummitPage() {
         className="relative bg-black overflow-x-hidden"
         style={{ minHeight: "100vh" }}
       >
-        <ParticleBackground />
+        {introExited && <ParticleBackground />}
 
         {/* Parallax background image */}
         <img
@@ -214,7 +170,7 @@ export default function ESummitPage() {
       {/* ── LOWER SECTION — ParticleBackground starts here from About onwards ── */}
       <div className="relative bg-black overflow-x-hidden">
         {/* ParticleBackground scoped only to this lower section */}
-        <ParticleBackground />
+        {introExited && <ParticleBackground />}
         <div className="relative z-30 px-6 py-16 max-w-7xl mx-auto text-center text-white">
 
           {/* About Section */}

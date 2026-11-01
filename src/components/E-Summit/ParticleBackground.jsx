@@ -8,7 +8,11 @@ export default function ParticleBackground() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    let animationId;
+    if (!ctx) return;
+    let animationId = 0;
+    let inView = false;
+    let lastFrame = 0;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let mouse = { x: null, y: null };
 
     const REPEL_RADIUS = 130;
@@ -159,10 +163,27 @@ export default function ParticleBackground() {
       update() { this.rot += this.speed; }
 
       draw() {
+        // Galaxy detail is fixed in local coordinates. Rasterize once and rotate
+        // that image, retaining every star, dust lane and the existing motion.
+        if (!this.sprite) {
+          const sprite = document.createElement("canvas");
+          sprite.width = sprite.height = Math.ceil(this.radius * 3.2 + 32);
+          const spriteContext = sprite.getContext("2d");
+          if (!spriteContext) return;
+          this.paint(spriteContext, sprite.width / 2);
+          this.sprite = sprite;
+        }
         ctx.save();
         ctx.translate(this.cx, this.cy);
         ctx.scale(1, this.tilt);
         ctx.rotate(this.rot);
+        ctx.drawImage(this.sprite, -this.sprite.width / 2, -this.sprite.height / 2);
+        ctx.restore();
+      }
+
+      paint(ctx, center) {
+        ctx.save();
+        ctx.translate(center, center);
 
         // Outer diffuse halo — large, blue, like reference
         const halo = ctx.createRadialGradient(0, 0, this.radius * 0.15, 0, 0, this.radius * 1.45);
@@ -635,7 +656,16 @@ export default function ParticleBackground() {
     };
 
     // ── ANIMATE ───────────────────────────────────────────────────────────────
-    const animate = () => {
+    const animate = (now) => {
+      animationId = 0;
+      if (!inView || document.hidden) return;
+      // Existing background physics is calibrated to 60 updates/second.
+      // Avoid doubling work and animation speed on 120/144 Hz displays.
+      if (lastFrame && now - lastFrame < 1000 / 60) {
+        animationId = requestAnimationFrame(animate);
+        return;
+      }
+      lastFrame = lastFrame ? now - ((now - lastFrame) % (1000 / 60)) : now;
       // Draw deep blue space background first
       drawBackground();
 
@@ -655,12 +685,32 @@ export default function ParticleBackground() {
       drawLines();
       particles.forEach(p => { p.update(); p.draw(); });
 
-      animationId = requestAnimationFrame(animate);
+      if (!reducedMotion.matches) animationId = requestAnimationFrame(animate);
     };
-    animate();
+    const stop = () => {
+      if (animationId) cancelAnimationFrame(animationId);
+      animationId = 0;
+      lastFrame = 0;
+    };
+    const start = () => {
+      if (inView && !document.hidden && !animationId) animationId = requestAnimationFrame(animate);
+    };
+    const io = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      if (inView) start();
+      else stop();
+    });
+    io.observe(canvas);
+    const onVisibility = () => document.hidden ? stop() : start();
+    const onMotion = () => { stop(); start(); };
+    document.addEventListener("visibilitychange", onVisibility);
+    reducedMotion.addEventListener("change", onMotion);
 
     return () => {
-      cancelAnimationFrame(animationId);
+      stop();
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
+      reducedMotion.removeEventListener("change", onMotion);
       ro.disconnect();
       window.removeEventListener("resize", onResize);
       window.removeEventListener("mousemove", onMove);

@@ -35,12 +35,18 @@ The 2026 canvas harness also passed eight lifecycle/fallback checks. Its warm-fr
 
 Full `tsc --noEmit` diagnostics are unchanged from the baseline: existing errors concern Prisma configuration/generated client, a missing image declaration, and unrelated shared UI components. No new diagnostics were introduced in E-Summit 2027.
 
-`npm run build` is blocked by the missing generated Prisma client and Google Font download failures in this environment. The managed preview launcher also supplies unsupported `--host`/`--strictPort` flags to `next dev`, so browser visual QA and device FPS measurements remain unverified. No production deployment was performed.
+The original full-site `npm run build` was blocked by the missing generated Prisma client and Google Font download failures in this environment. The managed preview launcher also supplied unsupported `--host`/`--strictPort` flags to `next dev`. These were the initial validation limitations; the dedicated preview was subsequently deployed and checked as described below. Device FPS remains unmeasured.
 
-Before deployment, generate the repository's Prisma client in its configured environment, resolve existing build blockers, and run a production build. Verify the homepage, team and sponsorship routes at desktop and mobile widths, repeated navigation, keyboard focus, hidden tabs and reduced-motion settings. Profile on a real phone to tune pixel budgets if needed.
+Before deploying the full legacy application, generate the repository's Prisma client in its configured environment, resolve existing build blockers, and run a production build. Profile on a real phone to tune pixel budgets if needed.
 
 ## Dedicated 2027 live-preview build
 
 The `preview/` app now builds the canonical 2027 public pages independently of the legacy registration/admin backend. Its production build passes TypeScript checking and prerenders all three existing 2027 routes. Lora and Poppins are now bundled locally with licenses. The original full-site build limitations above still apply to the legacy application; they do not block this dedicated preview build.
 
-See `preview/README.md` for the GitHub/Vercel settings. At this commit, Vercel project creation was denied and browser sign-in is pending; automatic deployments are prepared but not yet active.
+See `preview/README.md` for the GitHub/Vercel settings. The Vercel project `e-summit-27` in the `ScoreLab` team is connected to `deepakscorelab/E_Cell_Website`. A commit to `main` triggered a production deployment automatically and reached READY on 2026-11-01.
+
+Live preview: https://e-summit-27-eight.vercel.app/E-Summit-27
+
+Cloud deployment exposed two preview packaging issues: the bundler included legacy middleware, and Tailwind ignored generated sources. The build boundary is now scoped to `preview/`, and the prepare script explicitly registers generated sources with Tailwind. The preview's framework was updated to Next.js 16.4.3; its production build, eight animation tests, and npm audit (zero vulnerabilities) passed locally. Earlier full-site build limitations refer to the legacy application, not this preview. Real-device FPS remains unmeasured.
+
+Live checks on 2026-11-01: the public URL returned HTTP 200 without credentials; desktop homepage and sponsorship styling rendered correctly; the mobile menu navigated to Team at a 390 px viewport with no horizontal overflow. The homepage had no failed loaded images, its fire canvas stayed within the configured pixel cap, and no browser console errors were captured during these checks. Team and sponsorship routes loaded through client navigation. Registration, event detail and other planned routes remain absent from the original 2027 source and are not implemented by this preview.

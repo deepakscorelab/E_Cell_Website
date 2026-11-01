@@ -6,8 +6,9 @@
 /**
  * Production is served behind /e-cell/ (same as the old E-Summit site).
  * `npm run dev` serves the page at /E-Summit-27, so no prefix there.
+ * Dedicated preview builds set NEXT_PUBLIC_ESUMMIT_PREFIX to an empty string.
  */
-const PREFIX = process.env.NODE_ENV === "production" ? "/e-cell" : "";
+const PREFIX = process.env.NEXT_PUBLIC_ESUMMIT_PREFIX ?? (process.env.NODE_ENV === "production" ? "/e-cell" : "");
 
 /** Internal route base used for all links. */
 export const BASE = `${PREFIX}/E-Summit-27`;

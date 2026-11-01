@@ -38,3 +38,9 @@ Full `tsc --noEmit` diagnostics are unchanged from the baseline: existing errors
 `npm run build` is blocked by the missing generated Prisma client and Google Font download failures in this environment. The managed preview launcher also supplies unsupported `--host`/`--strictPort` flags to `next dev`, so browser visual QA and device FPS measurements remain unverified. No production deployment was performed.
 
 Before deployment, generate the repository's Prisma client in its configured environment, resolve existing build blockers, and run a production build. Verify the homepage, team and sponsorship routes at desktop and mobile widths, repeated navigation, keyboard focus, hidden tabs and reduced-motion settings. Profile on a real phone to tune pixel budgets if needed.
+
+## Dedicated 2027 live-preview build
+
+The `preview/` app now builds the canonical 2027 public pages independently of the legacy registration/admin backend. Its production build passes TypeScript checking and prerenders all three existing 2027 routes. Lora and Poppins are now bundled locally with licenses. The original full-site build limitations above still apply to the legacy application; they do not block this dedicated preview build.
+
+See `preview/README.md` for the GitHub/Vercel settings. At this commit, Vercel project creation was denied and browser sign-in is pending; automatic deployments are prepared but not yet active.

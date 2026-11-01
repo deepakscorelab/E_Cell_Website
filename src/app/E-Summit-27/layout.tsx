@@ -1,21 +1,26 @@
 
 import type { Metadata, Viewport } from "next";
-import { Lora, Poppins } from "next/font/google";
+import localFont from "next/font/local";
 import "./e27.css";
 import NavBar27 from "@/components/E-Summit-27/NavBar27";
 import Footer27 from "@/components/E-Summit-27/Footer27";
 
 // Only the weights actually used on the page.
-const lora = Lora({
-  subsets: ["latin"],
-  weight: ["400", "500"],
+const lora = localFont({
+  src: [
+    { path: "../../../public/E-Summit-27/fonts/lora-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "../../../public/E-Summit-27/fonts/lora-latin-500-normal.woff2", weight: "500", style: "normal" },
+  ],
   display: "swap",
   variable: "--e27-font-heading",
 });
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+const poppins = localFont({
+  src: [
+    { path: "../../../public/E-Summit-27/fonts/poppins-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "../../../public/E-Summit-27/fonts/poppins-latin-500-normal.woff2", weight: "500", style: "normal" },
+    { path: "../../../public/E-Summit-27/fonts/poppins-latin-600-normal.woff2", weight: "600", style: "normal" },
+  ],
   display: "swap",
   variable: "--e27-font-body",
 });

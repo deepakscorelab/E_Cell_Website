@@ -1,4 +1,4 @@
-import { cp, mkdir, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
@@ -12,7 +12,9 @@ for (const directory of ["app", "components", "context"]) {
   await mkdir(path.join(preview, "src", directory), { recursive: true });
   await cp(path.join(root, "src", directory, "E-Summit-27"), path.join(preview, "src", directory, "E-Summit-27"), { recursive: true });
 }
-await cp(path.join(root, "src/app/globals.css"), path.join(preview, "src/app/globals.css"));
+// Generated sources are gitignored, so Tailwind must scan them explicitly.
+const globalStyles = await readFile(path.join(root, "src/app/globals.css"), "utf8");
+await writeFile(path.join(preview, "src/app/globals.css"), `${globalStyles}\n@source "../";\n`);
 await mkdir(path.join(preview, "public"), { recursive: true });
 await cp(path.join(root, "public/E-Summit-27"), path.join(preview, "public/E-Summit-27"), { recursive: true });
 await writeFile(path.join(preview, "src/app/layout.tsx"), `import type { Metadata } from "next";

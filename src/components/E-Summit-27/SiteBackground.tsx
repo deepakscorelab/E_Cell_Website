@@ -25,10 +25,10 @@ export default function SiteBackground() {
       <div className="e27-horizon" />
       <div className="e27-site-artwork">
         <img
-          src={asset("campus-transparent.webp")}
+          src={asset("campus-transparent-v2.webp")}
           alt=""
           width={1672}
-          height={940}
+          height={941}
           decoding="async"
           fetchPriority="high"
         />

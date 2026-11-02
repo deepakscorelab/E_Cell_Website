@@ -19,7 +19,6 @@ export default function BecomeSponsor() {
         <div className="e27-card relative mx-auto max-w-6xl overflow-hidden px-6 py-12 sm:px-10 lg:px-14 lg:py-16">
           <div className="relative grid gap-12 lg:grid-cols-[1.1fr_1fr]">
             <div>
-              <p className="e27-label mb-4">Become a sponsor</p>
               <h2
                 id="e27s-cta-title"
                 className="font-[family-name:var(--e27-font-heading)] text-4xl leading-tight text-white sm:text-5xl"

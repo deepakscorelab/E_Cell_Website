@@ -211,9 +211,9 @@
   color: #fff;
 }
 .e27t-chip[aria-pressed="true"] {
-  background: linear-gradient(135deg, var(--e27-deep), var(--e27-bright));
+  background: var(--e27-bright);
   border-color: transparent;
-  color: #fff;
+  color: #160a29;
 }
 
 /* ---------- Reduced motion ---------- */

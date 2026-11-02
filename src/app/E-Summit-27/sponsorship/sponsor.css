@@ -72,8 +72,8 @@
   right: -0.35rem;
   padding: 0.35rem 0.9rem;
   border-radius: 0.4rem 0 0 0.4rem;
-  background: linear-gradient(135deg, var(--e27-deep), var(--e27-bright));
-  color: #fff;
+  background: var(--e27-bright);
+  color: #160a29;
   font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.18em;

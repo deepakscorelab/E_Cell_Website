@@ -5,7 +5,6 @@ export default function SponsorHero() {
   return (
     <section aria-labelledby="e27s-hero-title" className="e27s-hero px-4 pb-24 pt-28 sm:px-6 sm:pb-32 lg:px-8">
       <div className="mx-auto flex min-h-[60vh] max-w-4xl flex-col items-center justify-center text-center">
-        <p className="e27-label e27-rise">Partner with E-Summit&apos;27</p>
 
         <h1
           id="e27s-hero-title"

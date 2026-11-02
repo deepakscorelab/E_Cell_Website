@@ -58,7 +58,6 @@ export default function Tiers() {
     >
       <div className="mx-auto max-w-7xl">
         <Reveal className="text-center">
-          <p className="e27-label mb-4">Partnership tiers</p>
           <h2 id="e27s-tiers-title" className="e27-heading text-3xl sm:text-5xl">
             Choose your <span className="text-white">flame</span>
           </h2>

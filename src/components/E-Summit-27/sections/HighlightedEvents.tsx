@@ -15,7 +15,6 @@ export default function HighlightedEvents() {
       <div className="mx-auto max-w-7xl">
         <Reveal className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
           <div>
-            <p className="e27-label mb-4">What awaits you</p>
             <h2 id="e27-events-title" className="e27-heading text-4xl sm:text-6xl">
               Highlighted <span className="text-white">events</span>
             </h2>
@@ -25,25 +24,22 @@ export default function HighlightedEvents() {
           </Link>
         </Reveal>
 
-        <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="e27-event-grid">
           {highlightedEvents.map((ev, i) => (
             <li key={ev.title}>
               <Reveal delay={(i % 3) * 0.07} className="h-full">
                 <Link
                   href={`${BASE}${ev.href}`}
-                  className="e27-card e27-tilt-card group flex h-full flex-col p-7"
+                  className="e27-card e27-event-card group"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="rounded-full border border-[var(--e27-line)] px-3 py-1 text-[11px] font-medium uppercase tracking-[0.2em] text-[var(--e27-magenta)]">
+                    <span className="e27-event-category">
                       {ev.tag}
                     </span>
-                    <span className="font-[family-name:var(--e27-font-heading)] text-sm text-white/40">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
                   </div>
-                  <h3 className="mt-8 font-[family-name:var(--e27-font-heading)] text-2xl text-white">{ev.title}</h3>
-                  <p className="mt-3 flex-1 text-sm leading-6 text-[var(--e27-muted)]">{ev.description}</p>
-                  <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--e27-lavender)]">
+                  <h3>{ev.title}</h3>
+                  <p>{ev.description}</p>
+                  <span className="e27-event-link">
                     Learn more
                     <ArrowUpRight
                       size={16}

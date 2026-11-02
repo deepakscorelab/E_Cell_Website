@@ -15,7 +15,6 @@ export default function PastSponsors() {
       style={{ containIntrinsicSize: "auto 1100px" }}
     >
       <Reveal className="px-4 text-center">
-        <p className="e27-label mb-4">Previous Sponsors</p>
         <h2 id="e27s-past-title" className="e27-heading text-3xl sm:text-5xl">
           Brands that <span className="text-white">ignited E-Summit</span>
         </h2>

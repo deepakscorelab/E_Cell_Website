@@ -32,7 +32,6 @@ export default function Sponsors() {
       style={{ containIntrinsicSize: "auto 640px" }}
     >
       <Reveal className="px-4 text-center">
-        <p className="e27-label mb-4">Backed by the best</p>
         <h2 id="e27-sponsors-title" className="e27-heading text-4xl sm:text-6xl">
           Previous <span className="text-white">sponsors</span>
         </h2>

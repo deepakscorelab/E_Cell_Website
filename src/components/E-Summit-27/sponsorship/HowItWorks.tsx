@@ -10,7 +10,6 @@ export default function HowItWorks() {
     >
       <div className="mx-auto max-w-5xl">
         <Reveal className="text-center">
-          <p className="e27-label mb-4">How it works</p>
           <h2 id="e27s-how-title" className="e27-heading text-3xl sm:text-5xl">
             Three steps <span className="text-white">to ignition</span>
           </h2>

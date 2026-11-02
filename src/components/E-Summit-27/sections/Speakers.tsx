@@ -7,7 +7,6 @@ export default function Speakers() {
       className="e27-section overflow-hidden py-24 lg:py-32"
       style={{ containIntrinsicSize: "auto 850px" }}>
       <Reveal className="px-4 text-center">
-        <p className="e27-label mb-4">Voices that inspired</p>
         <h2 id="e27-speakers-title" className="e27-heading text-4xl sm:text-6xl">
           Previous <span className="text-white">speakers</span>
         </h2>

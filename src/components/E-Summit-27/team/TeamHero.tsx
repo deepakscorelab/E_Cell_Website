@@ -26,7 +26,6 @@ export default function TeamHero() {
       />
 
       <div className="mx-auto flex min-h-[62vh] max-w-4xl flex-col items-center justify-center text-center">
-        <p className="e27-label e27-rise">Meet the team behind E-Summit&apos;27</p>
 
         <h1
           id="e27t-hero-title"

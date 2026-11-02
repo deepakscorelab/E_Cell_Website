@@ -30,7 +30,6 @@ export default function TeamPage() {
       >
         <div className="mx-auto max-w-6xl">
           <Reveal className="text-center">
-            <p className="e27-label mb-4">Organising Committee</p>
             <h2 id="e27t-oc-title" className="e27-heading text-4xl sm:text-5xl">
               Overall <span className="text-white">Coordinators</span>
             </h2>

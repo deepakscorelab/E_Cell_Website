@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 // Adapted from React Bits Circular Carousel (David Haz).
 // License: ../hero/REACT-BITS-LICENSE.md
 import { FrameClock } from '../hero/firePerformance';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import './CircularCarousel.css';
 
 export interface CircularCarouselItem {
@@ -1095,11 +1096,11 @@ const CircularCarousel = ({
     >
       <div className="e27-carousel-controls">
         <button type="button" aria-label="Previous speaker" onClick={() => stepBy(-1)}>
-          <span aria-hidden="true">←</span>
+          <ArrowLeft size={18} aria-hidden="true" />
         </button>
         <span className="e27-carousel-position">{String(active + 1).padStart(2, '0')} / {String(count).padStart(2, '0')}</span>
         <button type="button" aria-label="Next speaker" onClick={() => stepBy(1)}>
-          <span aria-hidden="true">→</span>
+          <ArrowRight size={18} aria-hidden="true" />
         </button>
       </div>
       <div className="circular-carousel__view">

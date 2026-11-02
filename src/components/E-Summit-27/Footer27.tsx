@@ -7,7 +7,7 @@ import { CONTACT_EMAIL, INSTITUTE_EN, NAV_LINKS, asset } from "@/context/E-Summi
 export default function Footer27() {
   const isHome = usePathname().replace(/\/$/, "").endsWith("/E-Summit-27");
   return (
-    <footer className="border-t border-[var(--e27-line)] bg-[#050008]/55 px-4 py-12 sm:px-6 lg:px-8">
+    <footer className="e27-footer border-t border-[var(--e27-line)] bg-[#050008]/55 px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-[1.2fr_1fr]">
         <div>
           <div className="flex items-center gap-5">

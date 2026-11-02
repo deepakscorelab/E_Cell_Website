@@ -67,12 +67,12 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="e27-rise e27-delay-3 mt-7 flex flex-wrap items-center justify-center gap-3 text-sm text-white/85">
-          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--e27-line)] bg-[#050008]/60 px-4 py-2">
+        <div className="e27-rise e27-delay-3 mt-7 e27-hero-meta">
+          <span>
             <CalendarDays size={16} className="text-[var(--e27-magenta)]" aria-hidden="true" />
             {EVENT_DATES}
           </span>
-          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--e27-line)] bg-[#050008]/60 px-4 py-2">
+          <span>
             <MapPin size={16} className="text-[var(--e27-magenta)]" aria-hidden="true" />
             {VENUE}
           </span>
@@ -82,7 +82,7 @@ export default function Hero() {
           <Link href={REGISTER_URL} className="e27-btn e27-btn-primary">
             Register Now <ArrowRight size={16} aria-hidden="true" />
           </Link>
-          <Link href={`${BASE}/events`} className="e27-btn e27-btn-ghost">
+          <Link href={`${BASE}#events`} className="e27-btn e27-btn-ghost">
             Explore Events
           </Link>
         </div>

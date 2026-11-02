@@ -12,7 +12,6 @@ export default function ReachStats() {
     >
       <div className="mx-auto max-w-7xl">
         <div className="text-center">
-          <p className="e27-label mb-4">Why partner with us</p>
           <h2 id="e27s-why-title" className="e27-heading text-3xl sm:text-5xl">
             Reach that <span className="text-white">burns bright</span>
           </h2>

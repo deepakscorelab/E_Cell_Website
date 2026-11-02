@@ -8,7 +8,7 @@ Surface: the existing E-Summit 2027 marketing site (Persuade), with Team and Spo
 - Preserve names, contacts, institutional descriptions, data, speaker history and event content.
 
 ## Findings and changes
-- The strong cube edges fought with text and portraits. Reduce the shared field opacity from .75 to .30, keeping visible depth behind every section. Quieter tile-floor lines keep the same motion.
+- Keep the shared cube field clearly visible at .75 opacity. The earlier .30 opacity and dark vignette made it look blacked out; remove the vignette and the tile floor's dark wash. The static fallback also stays visible across the viewport. Quieter tile-floor lines keep the same motion.
 - Repeated kickers, two-tone titles, gradient rules and arbitrary event numbers added decoration without conveying structure. Remove decorative kickers/rules/numbers; make headings one clear foreground tone.
 - Three equal institutional cards produced narrow, dense paragraphs with uneven heights. Use wide glass rows with identity on the left and 16–17px body copy up to 70ch on the right; stack naturally on mobile.
 - Five floating statistic cards repeated the same container. Present the existing values in one ruled band. Keep the count-up effect.

@@ -37,7 +37,6 @@ export default function SiteCubes() {
       {mounted && <Cubes gridSize={14} gap={0.22} faceColor="#170728" edgeColor="#9030f0"
         rippleColor="#d070f0" edgeWidth={1.2} shading={0.8} radius={3.5} maxAngle={35}
         speed={0.7} bounce={0.25} brush={0.45} className="e27-cubes-field" />}
-      <div className="e27-cubes-vignette" />
     </div>
   );
 }

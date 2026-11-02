@@ -28,8 +28,7 @@ export function asset(name: string): string {
 export const EVENT_NAME = "E-Summit'27";
 export const TAGLINE = "IGNITING THE UNWRITTEN";
 
-// TODO: dates not decided in the brochure — replace when finalised.
-export const EVENT_DATES = "Dates announcing soon";
+export const EVENT_DATES = "23–24 January 2027";
 export const VENUE = "IIT Ropar";
 
 // TODO: replace with the real registration route / form URL.

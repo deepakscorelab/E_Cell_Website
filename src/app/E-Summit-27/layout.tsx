@@ -6,6 +6,7 @@ import NavBar27 from "@/components/E-Summit-27/NavBar27";
 import Footer27 from "@/components/E-Summit-27/Footer27";
 import SiteCubes from "@/components/E-Summit-27/SiteCubes";
 import ScrollProgress from "@/components/E-Summit-27/ScrollProgress";
+import { EVENT_DATES } from "@/context/E-Summit-27/constants";
 
 // One self-hosted Fontsource family for consistent, professional typography.
 const manrope = localFont({
@@ -28,7 +29,7 @@ const devanagari = localFont({
 export const metadata: Metadata = {
   title: "E-Summit'27 | Igniting the Unwritten | IIT Ropar",
   description:
-    "E-Summit'27, the flagship entrepreneurship summit of E-Cell IIT Ropar — keynotes, workshops, competitions and startup showcases.",
+    `Join E-Summit'27 on ${EVENT_DATES} at IIT Ropar — keynotes, workshops, competitions and startup showcases at E-Cell's flagship entrepreneurship summit.`,
 };
 
 export const viewport: Viewport = {

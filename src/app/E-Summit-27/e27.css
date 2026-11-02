@@ -186,21 +186,14 @@
 .e27-cubes-fallback {
   position: absolute;
   inset: 0;
-  opacity: 0.12;
+  opacity: 0.35;
   background: repeating-linear-gradient(30deg, transparent 0 64px, #9030f0 65px 66px, transparent 67px 130px),
     repeating-linear-gradient(150deg, transparent 0 64px, #6211bf 65px 66px, transparent 67px 130px);
-  mask-image: radial-gradient(ellipse, transparent 15%, #000 90%);
 }
 .e27-site-cubes .e27-cubes-field {
   position: absolute;
   inset: 0;
-  opacity: 0.30;
-}
-.e27-cubes-vignette {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 50% 42%, rgba(5, 0, 8, 0.83), rgba(5, 0, 8, 0.12) 70%),
-    linear-gradient(0deg, #050008, transparent 18%, transparent 85%, rgba(5, 0, 8, 0.6));
+  opacity: 0.75;
 }
 .e27-hero-flame { pointer-events: none; }
 
@@ -365,7 +358,6 @@
   perspective-origin: 50% 0%;
   overflow: hidden;
   pointer-events: none;
-  background: linear-gradient(to bottom, transparent, rgba(5, 0, 8, 0.65));
   -webkit-mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 85%, transparent);
   mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 85%, transparent);
 }

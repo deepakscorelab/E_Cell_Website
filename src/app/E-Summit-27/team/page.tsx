@@ -4,7 +4,6 @@ import TeamHero from "@/components/E-Summit-27/team/TeamHero";
 import OcCard from "@/components/E-Summit-27/team/OcCard";
 import MemberCard from "@/components/E-Summit-27/team/MemberCard";
 import DepartmentGrid from "@/components/E-Summit-27/team/DepartmentGrid";
-import JoinBand from "@/components/E-Summit-27/team/JoinBand";
 import Reveal from "@/components/E-Summit-27/Reveal";
 import { coreTeamMembers, headMembers, coordinatorMembers } from "@/context/E-Summit-27/TeamData";
 import { groupHeads } from "@/context/E-Summit-27/teamGroups";
@@ -70,8 +69,6 @@ export default function TeamPage() {
           </div>
         </section>
       )}
-
-      <JoinBand />
     </main>
   );
 }

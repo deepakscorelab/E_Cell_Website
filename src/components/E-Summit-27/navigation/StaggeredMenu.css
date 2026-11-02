@@ -1,0 +1,84 @@
+/* React Bits Staggered Menu, adapted to E-Summit; inherits the existing fonts. */
+.e27-staggered-menu {
+  --e27-menu-width: min(600px, 100%);
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  overflow: hidden;
+  font-family: var(--e27-font-body), system-ui, sans-serif;
+}
+.e27-sm-header { position: absolute; inset: 0 0 auto; z-index: 3; }
+.e27-sm-header--scrolled {
+  background: rgba(5, 0, 8, 0.65);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--e27-line);
+}
+.e27-staggered-menu[data-open="true"] .e27-sm-header {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-color: transparent;
+}
+.e27-sm-header-inner {
+  margin: 0 auto; max-width: 1344px; height: 80px; padding: 0 32px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.e27-sm-logo, .e27-sm-toggle { pointer-events: auto; }
+.e27-sm-logo img { width: 178px; height: auto; display: block; }
+.e27-sm-toggle {
+  display: inline-flex; align-items: center; gap: 16px;
+  min-height: 44px; padding: 10px 12px; border: 0; background: transparent;
+  color: var(--e27-lavender); font: inherit; font-size: 14px;
+  font-weight: 500; letter-spacing: 0.04em; cursor: pointer;
+}
+.e27-sm-toggle-text { height: 1.4em; width: 3.3em; overflow: hidden; }
+.e27-sm-toggle-inner { display: flex; flex-direction: column; line-height: 1.4; }
+.e27-sm-toggle-inner > span { display: block; height: 1.4em; }
+.e27-sm-icon { position: relative; width: 18px; height: 18px; }
+.e27-sm-icon > span {
+  position: absolute; width: 18px; height: 2px; border-radius: 2px;
+  top: 8px; left: 0; background: currentColor;
+}
+.e27-sm-icon > span:last-child { transform: rotate(90deg); }
+.e27-sm-scrim {
+  position: absolute; inset: 0; background: rgba(5, 0, 8, 0.38);
+  opacity: 0; transition: opacity 0.25s ease;
+}
+.e27-staggered-menu[data-open="true"] .e27-sm-scrim { opacity: 1; pointer-events: auto; }
+.e27-sm-prelayers { position: absolute; inset: 0 0 0 auto; width: var(--e27-menu-width); }
+.e27-sm-prelayer { position: absolute; inset: 0; background: #9030f0; }
+.e27-sm-prelayer:last-child { background: #6211bf; }
+.e27-sm-panel, .e27-sm-prelayer { transform: translateX(100%); }
+.e27-sm-panel {
+  position: absolute; inset: 0 0 0 auto; width: var(--e27-menu-width);
+  padding: 108px 44px 32px; background: #170728;
+  border-left: 1px solid rgba(245, 212, 254, 0.2);
+  overflow-y: auto; overscroll-behavior: contain;
+  display: flex; flex-direction: column; pointer-events: none;
+}
+.e27-staggered-menu[data-open="true"] .e27-sm-panel { pointer-events: auto; }
+.e27-sm-eyebrow { color: var(--e27-magenta); font-size: 11px; font-weight: 500; letter-spacing: .20em; text-transform: uppercase; margin-bottom: 20px; }
+.e27-sm-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 5px; }
+.e27-sm-item-wrap { overflow: hidden; padding: 3px; }
+.e27-sm-item {
+  display: flex; align-items: center; gap: 12px; justify-content: space-between;
+  min-height: 44px; text-decoration: none; color: #fff; font-family: inherit;
+  font-size: clamp(1.375rem, 3vw, 2.25rem); font-weight: 500; line-height: 1.35;
+  letter-spacing: 0; transition: color .2s ease;
+}
+.e27-sm-item-label { display: inline-block; transform-origin: 50% 100%; }
+.e27-sm-item:hover, .e27-sm-item[aria-current="page"] { color: var(--e27-magenta); }
+.e27-sm-number { align-self: flex-start; padding-top: 5px; color: var(--e27-magenta); font-size: 12px; font-weight: 400; }
+.e27-sm-footer { margin-top: auto; padding-top: 28px; font-size: 12px; line-height: 1.8; color: var(--e27-lavender); }
+.e27-sm-footer span { color: var(--e27-muted); }
+@media (max-width: 640px) {
+  .e27-sm-header-inner { height: 72px; padding: 0 16px; }
+  .e27-sm-logo img { width: 154px; }
+  .e27-sm-panel { padding: 96px 24px max(24px, env(safe-area-inset-bottom)); }
+  .e27-sm-item { font-size: clamp(1.375rem, 5.8vw, 2rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .e27-sm-scrim, .e27-sm-item { transition: none; }
+}

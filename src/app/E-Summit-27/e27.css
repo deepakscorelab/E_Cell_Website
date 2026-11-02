@@ -131,8 +131,8 @@
 .e27-card,
 .e27-glass {
   position: relative;
-  background-color: rgba(20, 20, 28, 0.32);
-  background-image: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.025) 42%, rgba(255, 255, 255, 0.055));
+  background-color: rgba(20, 20, 28, 0.12);
+  background-image: linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.008) 42%, rgba(255, 255, 255, 0.025));
   border: 1px solid rgba(255, 255, 255, 0.23);
   border-top-color: rgba(255, 255, 255, 0.48);
   border-left-color: rgba(255, 255, 255, 0.32);
@@ -141,8 +141,8 @@
     inset 0 -1px 0 rgba(255, 255, 255, 0.07),
     inset 1px 0 16px rgba(255, 255, 255, 0.035),
     0 16px 38px -24px rgba(0, 0, 0, 0.65);
-  -webkit-backdrop-filter: blur(10px) saturate(125%);
-  backdrop-filter: blur(10px) saturate(125%);
+  -webkit-backdrop-filter: blur(4px) saturate(115%);
+  backdrop-filter: blur(4px) saturate(115%);
 }
 /* Nested and continuously moving surfaces keep the glass highlights without
    repeatedly filtering another composited surface. */
@@ -153,8 +153,8 @@
 }
 @media (max-width: 767px), (pointer: coarse) {
   .e27-card, .e27-glass {
-    -webkit-backdrop-filter: blur(5px);
-    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
   }
   .e27-glass-inset, .e27-marquee .e27-card {
     -webkit-backdrop-filter: none;
@@ -172,29 +172,6 @@
   .e27-tilt-card:hover {
     transform: perspective(900px) rotateX(4deg) rotateY(-5deg) translateY(-4px);
   }
-}
-
-/* ---------- Navbar ---------- */
-.e27-nav {
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-  border-bottom: 1px solid transparent;
-}
-.e27-nav--scrolled {
-  background-color: rgba(5, 0, 8, 0.78);
-  border-bottom-color: var(--e27-line);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-}
-.e27-mobile-panel {
-  transform: translateY(-8px);
-  opacity: 0;
-  pointer-events: none;
-  transition: transform 0.25s ease, opacity 0.25s ease;
-}
-.e27-mobile-panel[data-open="true"] {
-  transform: translateY(0);
-  opacity: 1;
-  pointer-events: auto;
 }
 
 /* =====================================================================

@@ -285,21 +285,30 @@
 }
 .e27-hero-flame { pointer-events: none; }
 
-/* Center the transparent artwork while the cubes and tiles remain visible beneath it. */
+/* The visible pillars occupy the bottom 389px of the 1672 x 940 source.
+   Center that visible region, excluding the empty transparent space above it. */
 .e27-site-artwork {
   position: absolute;
-  inset: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: calc(100svh * 1672 / 389);
+  aspect-ratio: 1672 / 389;
+  overflow: hidden;
   z-index: 2;
   background: transparent;
   pointer-events: none;
 }
 .e27-site-artwork img {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   max-width: none;
   height: 100%;
-  object-fit: contain;
-  object-position: center;
+  object-fit: cover;
+  object-position: center bottom;
 }
 .e27-site-background :is(.e27-floor-wrap, .e27-horizon) { z-index: 1; }
 

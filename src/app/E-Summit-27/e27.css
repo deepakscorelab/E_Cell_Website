@@ -486,3 +486,10 @@
 
 .e27-footer > .mx-auto { max-width: var(--e27-content-width); }
 .e27-root .e27-heading .e27-accent { color: inherit; }
+
+/* Resolve every section's true height before native fragment navigation.
+   Visibility-based canvas pausing and image lazy loading remain independent. */
+.e27-root:has(:target) .e27-section {
+  content-visibility: visible;
+  contain-intrinsic-size: none;
+}

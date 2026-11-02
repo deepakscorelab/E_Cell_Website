@@ -82,9 +82,9 @@ export default function Hero() {
           <Link href={REGISTER_URL} className="e27-btn e27-btn-primary">
             Register Now <ArrowRight size={16} aria-hidden="true" />
           </Link>
-          <Link href={`${BASE}#events`} className="e27-btn e27-btn-ghost">
+          <a href={`${BASE}#events`} className="e27-btn e27-btn-ghost">
             Explore Events
-          </Link>
+          </a>
         </div>
 
       </div>

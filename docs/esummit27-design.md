@@ -22,3 +22,5 @@ Surface: the existing E-Summit 2027 marketing site (Persuade), with Team and Spo
 No new renderer or dependency. Existing visibility pausing, reduced-motion handling, frame budgets and lazy loading remain. Typography and visual hierarchy are improved without adding animation cost.
 
 Impeccable's launcher was unavailable in this environment; its polish and craft guidance was applied through direct source and browser review. No automated Impeccable detector result is claimed.
+
+Fragment navigation lays out section content before jumping, avoiding incorrect positions from skipped-content height estimates. This does not disable canvas visibility pausing or lazy image loading. Desktop/mobile layouts, native section navigation, build and the eight animation tests were checked.

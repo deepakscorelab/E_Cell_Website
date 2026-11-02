@@ -285,30 +285,23 @@
 }
 .e27-hero-flame { pointer-events: none; }
 
-/* The visible pillars occupy the bottom 389px of the 1672 x 940 source.
-   Center that visible region, excluding the empty transparent space above it. */
+/* Keep the transparent artwork bottom-aligned and centered horizontally. */
 .e27-site-artwork {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  max-width: calc(100svh * 1672 / 389);
-  aspect-ratio: 1672 / 389;
-  overflow: hidden;
+  inset: 0;
   z-index: 2;
   background: transparent;
   pointer-events: none;
 }
 .e27-site-artwork img {
   position: absolute;
-  inset: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
   display: block;
   width: 100%;
   max-width: none;
-  height: 100%;
-  object-fit: cover;
-  object-position: center bottom;
+  height: auto;
 }
 .e27-site-background :is(.e27-floor-wrap, .e27-horizon) { z-index: 1; }
 

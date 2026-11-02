@@ -5,16 +5,9 @@ import "./e27.css";
 import NavBar27 from "@/components/E-Summit-27/NavBar27";
 import Footer27 from "@/components/E-Summit-27/Footer27";
 import SiteCubes from "@/components/E-Summit-27/SiteCubes";
+import ScrollProgress from "@/components/E-Summit-27/ScrollProgress";
 
-// Fontsource WOFF2 subsets: self-hosted, one file per active family.
-const spaceGrotesk = localFont({
-  src: "../../../public/E-Summit-27/fonts/space-grotesk-latin-wght-normal.woff2",
-  weight: "300 700",
-  style: "normal",
-  display: "swap",
-  variable: "--e27-font-heading",
-});
-
+// One self-hosted Fontsource family for consistent, professional typography.
 const manrope = localFont({
   src: "../../../public/E-Summit-27/fonts/manrope-latin-wght-normal.woff2",
   weight: "200 800",
@@ -46,9 +39,10 @@ export const viewport: Viewport = {
 export default function ESummit27Layout({ children }: { children: React.ReactNode }) {
   return (
     // Providers (AuthProvider, data context) go here later, wrapping this div.
-    <div className={`e27-root dark ${spaceGrotesk.variable} ${manrope.variable} ${devanagari.variable}`}>
+    <div className={`e27-root dark ${manrope.variable} ${devanagari.variable}`}>
       <SiteCubes />
       <NavBar27 />
+      <ScrollProgress />
       <div className="e27-site-content">
         {children}
         <Footer27 />

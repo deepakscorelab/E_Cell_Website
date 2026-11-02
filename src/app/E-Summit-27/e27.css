@@ -2,6 +2,7 @@
    CSS motion uses transform/opacity; all pages share an instanced React Bits cubes canvas. */
 
 .e27-root {
+  --e27-font-heading: var(--e27-font-body);
   --e27-bg: #050008;
   --e27-deep: #6211bf;
   --e27-violet: #9030f0;
@@ -17,6 +18,8 @@
   background: var(--e27-bg);
   color: var(--e27-text);
   font-family: var(--e27-font-body), system-ui, sans-serif;
+  font-weight: 400;
+  line-height: 1.65;
   color-scheme: dark;
   min-height: 100vh;
   overflow-x: clip;
@@ -36,21 +39,28 @@
 
 .e27-heading {
   font-family: var(--e27-font-heading), system-ui, sans-serif;
-  font-weight: 500;
-  letter-spacing: 0.025em;
-  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  text-transform: none;
   color: var(--e27-lavender);
   line-height: 1.05;
 }
 
 .e27-label {
   font-family: var(--e27-font-body), system-ui, sans-serif;
-  font-weight: 500;
-  letter-spacing: 0.32em;
+  font-weight: 650;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   font-size: 0.75rem;
   color: var(--e27-muted);
 }
+
+.e27-root :is(h1, h2, h3) {
+  font-family: var(--e27-font-heading), system-ui, sans-serif;
+  text-wrap: balance;
+}
+.e27-root h3 { font-weight: 600; }
+.e27-root p { text-wrap: pretty; }
 
 .e27-accent {
   color: var(--e27-bright);
@@ -85,7 +95,7 @@
   border-radius: 999px;
   font-weight: 600;
   font-size: 0.9rem;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.01em;
   position: relative;
   transition: transform 0.25s ease, opacity 0.25s ease;
 }
@@ -346,7 +356,7 @@
 
 .e27-reveal {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
   transition: opacity 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
   transition-delay: var(--e27-reveal-delay, 0s);
 }
@@ -415,4 +425,54 @@
 }
 @media (max-width: 767px) {
   .e27-floor-wrap { --e27-tile: 64px; }
+}
+
+/* Reading progress: native scroll timeline; JS only for unsupported browsers. */
+.e27-scroll-progress {
+  position: fixed;
+  z-index: 70;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  pointer-events: none;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--e27-deep), var(--e27-bright), var(--e27-lavender));
+}
+@keyframes e27-reading-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes e27-scroll-reveal {
+  from { opacity: 0.15; transform: translate3d(0, var(--e27-reveal-y, 24px), 0); }
+  to { opacity: 1; transform: none; }
+}
+@supports (animation-timeline: scroll(root block)) {
+  .e27-scroll-progress {
+    animation: e27-reading-progress linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .e27-reveal {
+      transition: none;
+      animation: e27-scroll-reveal linear both;
+      animation-timeline: view(block);
+      animation-range: entry 0% entry 85%;
+    }
+    .e27-reveal:focus-within {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .e27-scroll-progress { display: none; }
+}
+@media print {
+  .e27-scroll-progress { display: none; }
+  .e27-reveal { opacity: 1 !important; transform: none !important; animation: none !important; }
 }

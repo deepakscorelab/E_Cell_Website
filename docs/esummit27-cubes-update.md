@@ -54,3 +54,10 @@ Source: https://github.com/DavidHDev/react-bits/tree/main/src/ts-default/Compone
 - Lanyards keep the existing 30 fps / 600k desktop / 350k mobile motion budgets. On settling, one frame uses up to 2x DPR (1.4M desktop / 700k mobile pixels), then rendering sleeps. Dragging resumes the motion budget.
 - Logo glow is a separate radial background. Entrance transforms finish at `none`, avoiding a retained scaled compositing layer. Existing logo artwork is unchanged: the available wordmark is 1218×219 and the flame is 347×551, so sharper master artwork would still improve fine detail.
 - Validation: preview production build and eight animation/lifecycle tests pass.
+
+## Scroll motion, typography and circular speakers carousel
+- Native view-timeline reveals make section entrances follow scroll position, with IntersectionObserver fallback and reduced-motion/focus handling. A thin reading-progress line tracks the page without intercepting scrolling.
+- Manrope (existing self-hosted Fontsource variable font) now handles headings and body; headings use restrained spacing, title case and semibold weight. One fewer active Latin font family is loaded.
+- Previous speakers use the actual React Bits Circular Carousel, adapted from https://github.com/DavidHDev/react-bits/tree/main/src/ts-default/Components/CircularCarousel (license in `src/components/E-Summit-27/hero/REACT-BITS-LICENSE.md`). The CSS 3D cylinder supports swipe/drag, horizontal wheel, keyboard and visible previous/next buttons; normal vertical scrolling remains native.
+- Carousel loads near the viewport, pauses offscreen/hidden, caps rendering at 60 fps, and sleeps when settled. Automatic rotation is off. Portraits use quality-90 640 px sources. A native scrollable photo list is the no-JS/loading/reduced-motion alternative.
+- All changes are scoped to E-Summit 2027; existing flame positions, cube background, glass surfaces and coordinator cards remain.

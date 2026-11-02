@@ -10,14 +10,16 @@ type RevealProps = {
   y?: number;
 };
 
-/** Native reveal-once; server-rendered content stays readable without JavaScript. */
+/** Scroll-linked where supported; reveal-once fallback keeps content readable. */
 export default function Reveal({ children, className = "", delay = 0, y = 24 }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (reduce.matches || el.getBoundingClientRect().top < window.innerHeight - 80) return;
+    // Native view timelines run on the compositor, without a JS scroll handler.
+    if (CSS.supports("animation-timeline: view()") || reduce.matches ||
+      el.getBoundingClientRect().top < window.innerHeight - 80) return;
     el.dataset.revealPending = "true";
     const show = () => {
       delete el.dataset.revealPending;

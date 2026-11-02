@@ -14,7 +14,6 @@ export default function TeamHero() {
   return (
     <section ref={ref} aria-labelledby="e27t-hero-title" className="e27t-hero px-4 pb-20 pt-28 sm:px-6 sm:pb-28 lg:px-8">
       {/* static CSS composition — no canvas */}
-      <div className="e27t-hero-glow" aria-hidden="true" />
       <img
         src={asset("flame-logo.webp")}
         alt=""

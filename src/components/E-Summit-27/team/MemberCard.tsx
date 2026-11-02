@@ -14,7 +14,6 @@ export default function MemberCard({ member, index = 0 }: MemberCardProps) {
     <article className="e27t-card e27-rise" style={{ animationDelay: `${(index % 8) * 60}ms` }}>
       <TeamPhoto src={member.image} name={member.name} width={400} imgClassName="e27t-card-img" />
       <div className="e27t-card-overlay" aria-hidden="true" />
-      <div className="e27t-card-tint" aria-hidden="true" />
 
       <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4">
         <div className="min-w-0">

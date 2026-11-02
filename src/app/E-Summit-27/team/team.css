@@ -6,15 +6,6 @@
   overflow: hidden;
   isolation: isolate;
 }
-.e27t-hero-glow {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  background:
-    radial-gradient(50% 45% at 50% 35%, rgba(144, 48, 240, 0.32), transparent 70%),
-    radial-gradient(80% 50% at 50% 100%, rgba(98, 17, 191, 0.35), transparent 75%),
-    transparent;
-}
 .e27t-hero-floor {
   position: absolute;
   left: 0;
@@ -113,14 +104,6 @@
   transition: opacity 0.35s ease;
   pointer-events: none;
 }
-.e27t-card-tint {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(98, 17, 191, 0.55), transparent 60%);
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  pointer-events: none;
-}
 .e27t-card-links {
   opacity: 0;
   transform: translateY(6px);
@@ -136,10 +119,6 @@
 }
 .e27t-card:hover .e27t-card-overlay,
 .e27t-card:focus-within .e27t-card-overlay {
-  opacity: 1;
-}
-.e27t-card:hover .e27t-card-tint,
-.e27t-card:focus-within .e27t-card-tint {
   opacity: 1;
 }
 .e27t-card:hover .e27t-card-links,
@@ -237,7 +216,6 @@
   .e27t-card,
   .e27t-card-img,
   .e27t-card-overlay,
-  .e27t-card-tint,
   .e27t-card-links,
   .e27t-icon-btn {
     transition: none !important;

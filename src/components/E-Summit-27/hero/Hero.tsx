@@ -24,22 +24,6 @@ export default function Hero() {
 
   return (
     <section ref={heroRef} className="e27-hero" aria-labelledby="e27-hero-title">
-      {/* Original moving tile floor, layered over the shared cube background. */}
-      <div className="e27-floor-wrap" aria-hidden="true">
-        <div className="e27-floor"><div className="e27-floor-track" /></div>
-      </div>
-      <div className="e27-horizon" aria-hidden="true" />
-      {/* Bottom-aligned campus artwork sits above both background effects. */}
-      <div className="e27-hero-artwork" aria-hidden="true">
-        <img
-          src={asset("hero-campus-background.webp")}
-          alt=""
-          width={1920}
-          height={1080}
-          decoding="async"
-          fetchPriority="high"
-        />
-      </div>
       <FlamePanel side="left" />
       <FlamePanel side="right" />
       {/* ---------- content ---------- */}

@@ -285,22 +285,21 @@
 }
 .e27-hero-flame { pointer-events: none; }
 
-/* Preserve the supplied artwork's proportions and bottom edge at every viewport. */
+/* Center the transparent artwork while the cubes and tiles remain visible beneath it. */
 .e27-site-artwork {
   position: absolute;
   inset: 0;
   z-index: 2;
-  background: #000;
+  background: transparent;
   pointer-events: none;
 }
 .e27-site-artwork img {
-  position: absolute;
-  bottom: 0;
-  left: 0;
   display: block;
   width: 100%;
   max-width: none;
-  height: auto;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
 }
 .e27-site-background :is(.e27-floor-wrap, .e27-horizon) { z-index: 1; }
 

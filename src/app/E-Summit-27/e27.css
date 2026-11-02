@@ -200,6 +200,33 @@
 }
 .e27-hero-flame { pointer-events: none; }
 
+/* Moving flame below the actions; the E-shaped brand mark stays above the title. */
+.e27-fire-panel {
+  position: relative;
+  width: min(100%, 640px);
+  height: clamp(180px, 25svh, 240px);
+  margin-top: 1rem;
+  overflow: hidden;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse at 50% 48%, #000 20%, transparent 75%);
+}
+.e27-fire-poster {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 75%, rgba(197,55,248,.35), rgba(98,17,191,.12) 35%, transparent 65%);
+}
+.e27-fire-scene {
+  position: absolute;
+  inset: 0 0 -65%;
+  opacity: 0;
+  transition: opacity .6s ease;
+}
+.e27-fire-scene[data-ready="true"] { opacity: 1; }
+.e27-fire-scene canvas { display: block; width: 100% !important; height: 100% !important; }
+@media (prefers-reduced-motion: reduce) {
+  .e27-fire-scene { transition: none; }
+}
+
 /* Static glow parent (filter is NOT animated; child floats inside) */
 .e27-flame-glow {
   filter: drop-shadow(0 0 28px rgba(197, 55, 248, 0.55)) drop-shadow(0 0 60px rgba(98, 17, 191, 0.5));

@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { CalendarDays, MapPin, ArrowRight } from "lucide-react";
 import { observeMotionActivity } from "../motionActivity";
+import FlamePanel from "./FlamePanel";
 import {
   BASE,
   EVENT_DATES,
@@ -90,7 +91,22 @@ export default function Hero() {
       </div>
 
       {/* ---------- content ---------- */}
-      <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-5xl flex-col items-center justify-center px-4 pb-10 pt-40 text-center">
+      <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-5xl flex-col items-center justify-center px-4 pb-8 pt-32 text-center">
+
+        <div className="e27-hero-flame mb-6" aria-hidden="true">
+          <div className="e27-ignite">
+            <div className="e27-flame-glow">
+              <img
+                src={asset("flame-logo.webp")}
+                alt=""
+                width={347}
+                height={551}
+                decoding="async"
+                className="e27-flame-float h-[24vh] max-h-[280px] min-h-[150px] w-auto"
+              />
+            </div>
+          </div>
+        </div>
 
         <h1 id="e27-hero-title" className="sr-only">
           E-Summit&apos;27 — Igniting the Unwritten
@@ -135,20 +151,7 @@ export default function Hero() {
             Explore Events
           </Link>
         </div>
-        <div className="e27-hero-flame mt-8" aria-hidden="true">
-          <div className="e27-ignite">
-            <div className="e27-flame-glow">
-              <img
-                src={asset("flame-logo.webp")}
-                alt=""
-                width={347}
-                height={551}
-                decoding="async"
-                className="e27-flame-float h-[22svh] max-h-[200px] min-h-[120px] w-auto"
-              />
-            </div>
-          </div>
-        </div>
+        <FlamePanel />
 
       </div>
     </section>

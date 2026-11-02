@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * The ONE WebGL canvas on the page.
+ * The fire scene, used in the bounded panel beneath the hero actions.
  * Plain three (r167) in a single useEffect: one fire quad + GPU embers + instanced shards.
  * No React state in the loop; refs + uniforms only; no per-frame allocation.
  */

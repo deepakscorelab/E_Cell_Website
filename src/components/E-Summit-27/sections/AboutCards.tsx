@@ -22,7 +22,7 @@ export default function AboutCards() {
           {ABOUT_CARDS.map((card, i) => (
             <Reveal key={card.title} delay={i * 0.08} className={i === 2 ? "md:col-span-2 lg:col-span-1" : ""}>
               <article className="e27-card e27-tilt-card flex h-full flex-col p-7 sm:p-8">
-                <div className="flex h-20 items-center">
+                {card.logo === "iitr-emblem.webp" && <div className="flex h-20 items-center">
                   <img
                     src={asset(card.logo)}
                     alt={`${card.title} logo`}
@@ -32,7 +32,7 @@ export default function AboutCards() {
                     decoding="async"
                     className="h-16 w-auto object-contain"
                   />
-                </div>
+                </div>}
                 <h3 className="mt-5 font-[family-name:var(--e27-font-heading)] text-2xl tracking-wide text-[var(--e27-lavender)]">
                   {card.title}
                 </h3>

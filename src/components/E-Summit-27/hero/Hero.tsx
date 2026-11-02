@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { CalendarDays, MapPin, ArrowRight } from "lucide-react";
 import { observeMotionActivity } from "../motionActivity";
@@ -16,80 +15,16 @@ import {
   asset,
 } from "@/context/E-Summit-27/constants";
 
-const Cubes = dynamic(() => import("./Cubes"), { ssr: false });
-
 export default function Hero() {
   const heroRef = useRef<HTMLElement>(null);
-  const [cubesOn, setCubesOn] = useState(false);
-
-  // Keep GPU initialization out of the entrance animation's critical path.
   useEffect(() => {
     const hero = heroRef.current;
     if (!hero) return;
-    const deadline = performance.now() + 1900;
-    let timeout = 0;
-    let idle = 0;
-    const cancel = () => {
-      clearTimeout(timeout);
-      if (idle) window.cancelIdleCallback?.(idle);
-      timeout = idle = 0;
-    };
-    const stop = observeMotionActivity(hero, (active) => {
-      hero.dataset.motionPaused = String(!active);
-      cancel();
-      if (!active) return;
-      timeout = window.setTimeout(() => {
-        const mount = () => setCubesOn(true);
-        if (window.requestIdleCallback) idle = window.requestIdleCallback(mount, { timeout: 1000 });
-        else mount();
-      }, Math.max(0, deadline - performance.now()));
-    });
-    return () => { cancel(); stop(); };
+    return observeMotionActivity(hero, active => { hero.dataset.motionPaused = String(!active); });
   }, []);
 
   return (
     <section ref={heroRef} className="e27-hero" aria-labelledby="e27-hero-title">
-      <div className="e27-cubes-stage" aria-hidden="true">
-        <div className="e27-cubes-fallback" />
-        {cubesOn && <Cubes
-          gridSize={14}
-          gap={0.22}
-          faceColor="#170728"
-          edgeColor="#9030f0"
-          rippleColor="#d070f0"
-          edgeWidth={1.2}
-          shading={0.8}
-          radius={3.5}
-          maxAngle={35}
-          speed={0.7}
-          bounce={0.25}
-          brush={0.45}
-          intro={true}
-          className="e27-cubes-field"
-        />}
-        <div className="e27-cubes-vignette" />
-      </div>
-
-      {/* ---------- corner logos (like the brochure cover) ---------- */}
-      <div className="pointer-events-none absolute inset-x-0 top-20 z-10 mx-auto flex max-w-7xl items-start justify-between px-4 sm:px-6 lg:px-8">
-        <img
-          src={asset("ecell-logo.webp")}
-          alt="E-Cell IIT Ropar"
-          width={140}
-          height={56}
-          decoding="async"
-          className="e27-rise h-9 w-auto opacity-90 sm:h-12"
-        />
-        <img
-          src={asset("tbif-logo.webp")}
-          alt="TBIF IIT Ropar"
-          width={140}
-          height={56}
-          decoding="async"
-          className="e27-rise h-9 w-auto opacity-90 sm:h-12"
-        />
-      </div>
-
       {/* ---------- content ---------- */}
       <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-5xl flex-col items-center justify-center px-4 pb-8 pt-32 text-center">
 
@@ -114,7 +49,7 @@ export default function Hero() {
 
         {/* The wordmark image already contains the "IGNITING THE UNWRITTEN" tagline. */}
         <div className="mt-2">
-          <div className="e27-sweep e27-rise e27-delay-1">
+          <div className="e27-rise e27-delay-1">
             <img
               src={asset("esummit27-wordmark.webp")}
               alt="E-Summit 27 — Igniting the Unwritten"

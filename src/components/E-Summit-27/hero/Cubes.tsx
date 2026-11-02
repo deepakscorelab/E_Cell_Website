@@ -387,7 +387,7 @@ export const Cubes = ({
     let reduce = reducedMotion.matches;
     const mobile = window.matchMedia('(pointer: coarse), (max-width: 767px)').matches;
     const frameClock = new FrameClock(mobile ? 30 : 60);
-    const interaction = container.closest('section') ?? container;
+    const interaction = container.closest('.e27-root') ?? container;
     let pendingPointer: { x: number; y: number } | null = null;
     const view = { width: 1, height: 1, ratio: 1, scale: 1 };
     const pointer = { x: 0, y: 0, inside: false, moved: 0 };
@@ -680,7 +680,7 @@ export const Cubes = ({
 
     const onPointerDown = (event: PointerEvent) => {
       if (!visible || document.hidden || reduce || settingsRef.current.paused) return;
-      if (event.target instanceof Element && event.target.closest('a, button')) return;
+      if (event.target instanceof Element && event.target.closest('a, button, .e27-lanyard-card')) return;
       const rect = container.getBoundingClientRect();
       ripple(event.clientX - rect.left, event.clientY - rect.top);
     };

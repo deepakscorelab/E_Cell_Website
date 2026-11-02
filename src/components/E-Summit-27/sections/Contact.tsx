@@ -11,7 +11,7 @@ export default function Contact() {
       style={{
         containIntrinsicSize: "auto 700px",
         background:
-          "radial-gradient(55% 60% at 50% 100%, rgba(98,17,191,0.35), transparent 70%), #050008",
+          "radial-gradient(55% 60% at 50% 100%, rgba(98,17,191,0.35), transparent 70%)",
       }}
     >
       <div className="mx-auto max-w-5xl text-center">

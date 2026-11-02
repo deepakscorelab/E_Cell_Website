@@ -1,15 +1,19 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { CONTACT_EMAIL, INSTITUTE_EN, NAV_LINKS, asset } from "@/context/E-Summit-27/constants";
 
 export default function Footer27() {
+  const isHome = usePathname().replace(/\/$/, "").endsWith("/E-Summit-27");
   return (
-    <footer className="border-t border-[var(--e27-line)] bg-[#050008] px-4 py-12 sm:px-6 lg:px-8">
+    <footer className="border-t border-[var(--e27-line)] bg-[#050008]/55 px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-[1.2fr_1fr]">
         <div>
           <div className="flex items-center gap-5">
             <img src={asset("flame-logo.webp")} alt="" width={26} height={42} loading="lazy" decoding="async" className="h-10 w-auto" />
-            <img src={asset("ecell-logo.webp")} alt="E-Cell IIT Ropar" width={110} height={44} loading="lazy" decoding="async" className="h-9 w-auto" />
-            <img src={asset("tbif-logo.webp")} alt="TBIF IIT Ropar" width={110} height={44} loading="lazy" decoding="async" className="h-9 w-auto" />
+            {!isHome && <img src={asset("ecell-logo.webp")} alt="E-Cell IIT Ropar" width={110} height={44} loading="lazy" decoding="async" className="h-9 w-auto" />}
+            {!isHome && <img src={asset("tbif-logo.webp")} alt="TBIF IIT Ropar" width={110} height={44} loading="lazy" decoding="async" className="h-9 w-auto" />}
             <img src={asset("iitr-emblem.webp")} alt="IIT Ropar" width={44} height={44} loading="lazy" decoding="async" className="h-10 w-auto" />
           </div>
           <p className="mt-5 text-sm font-medium tracking-[0.22em] text-white">

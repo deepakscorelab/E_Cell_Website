@@ -1,5 +1,5 @@
 /* E-Summit'27 scoped styles. Every class is prefixed e27-; variables live on .e27-root.
-   CSS motion uses transform/opacity; the hero uses an instanced React Bits cubes canvas. */
+   CSS motion uses transform/opacity; all pages share an instanced React Bits cubes canvas. */
 
 .e27-root {
   --e27-bg: #050008;
@@ -12,6 +12,8 @@
   --e27-muted: rgba(255, 255, 255, 0.72);
   --e27-line: rgba(197, 55, 248, 0.22);
 
+  position: relative;
+  isolation: isolate;
   background: var(--e27-bg);
   color: var(--e27-text);
   font-family: var(--e27-font-body), system-ui, sans-serif;
@@ -65,7 +67,7 @@
 .e27-section-bg {
   background:
     radial-gradient(60% 50% at 50% 0%, rgba(98, 17, 191, 0.22), transparent 70%),
-    var(--e27-bg);
+    transparent;
 }
 
 .e27-swirl-bg {
@@ -170,12 +172,13 @@
   position: relative;
   min-height: 100svh;
   overflow: hidden;
-  background: var(--e27-bg);
+  background: transparent;
   isolation: isolate;
 }
 
-.e27-cubes-stage {
-  position: absolute;
+.e27-site-cubes {
+  position: fixed;
+  z-index: 0;
   inset: 0;
   pointer-events: none;
 }
@@ -187,7 +190,7 @@
     repeating-linear-gradient(150deg, transparent 0 64px, #6211bf 65px 66px, transparent 67px 130px);
   mask-image: radial-gradient(ellipse, transparent 15%, #000 90%);
 }
-.e27-cubes-stage .e27-cubes-field {
+.e27-site-cubes .e27-cubes-field {
   position: absolute;
   inset: 0;
   opacity: 0.75;
@@ -260,28 +263,7 @@
 .e27-delay-3 { animation-delay: 0.8s; }
 .e27-delay-4 { animation-delay: 1s; }
 
-/* Wordmark light sweep: a band translated across once */
-.e27-sweep {
-  position: relative;
-  overflow: hidden;
-}
-.e27-sweep::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 40%;
-  background: linear-gradient(100deg, transparent, rgba(245, 212, 254, 0.55), transparent);
-  transform: translateX(-120%) skewX(-15deg);
-  animation: e27-sweep 1.4s 0.5s ease-out both;
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
-@keyframes e27-sweep {
-  from { transform: translateX(-120%) skewX(-15deg); opacity: 1; }
-  to { transform: translateX(320%) skewX(-15deg); opacity: 0; }
-}
+.e27-site-content { position: relative; z-index: 1; }
 
 /* =====================================================================
    MARQUEES (pure CSS; duplicated track, translate -50%)
@@ -317,12 +299,8 @@
   .e27-flame-float,
   .e27-ignite,
   .e27-rise,
-  .e27-sweep::after,
   .e27-marquee-track {
     animation: none !important;
-  }
-  .e27-sweep::after {
-    display: none;
   }
   .e27-marquee {
     overflow-x: auto;

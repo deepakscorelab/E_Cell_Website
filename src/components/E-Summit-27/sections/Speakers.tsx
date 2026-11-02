@@ -49,14 +49,9 @@ export default function Speakers() {
     <section
       id="speakers"
       aria-labelledby="e27-speakers-title"
-      className="e27-section e27-swirl-bg overflow-hidden py-24 lg:py-32"
-      style={{ backgroundImage: `url(${asset("swirl-bg.webp")})`, containIntrinsicSize: "auto 720px" }}
+      className="e27-section overflow-hidden py-24 lg:py-32"
+      style={{ containIntrinsicSize: "auto 720px" }}
     >
-      {/* static darkening overlay for text contrast */}
-      <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#050008] via-[#050008]/60 to-[#050008]"
-        aria-hidden="true"
-      />
       <div className="relative">
         <Reveal className="px-4 text-center">
           <p className="e27-label mb-4">Voices that inspired</p>

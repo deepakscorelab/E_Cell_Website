@@ -130,7 +130,13 @@ export default function DotMorphWordmark({ src, alt }: Props) {
       lastWidth = width; lastHeight = height;
       reveal(); // A later explicit replay resamples at the new size.
     });
-    replayRef.current = start;
+    replayRef.current = () => {
+      // The replay control can remain visible after the wordmark has scrolled away.
+      host.closest(".e27-hero")?.scrollIntoView({ block: "start", behavior: "instant" });
+      const rect = host.getBoundingClientRect();
+      visible = rect.bottom > 0 && rect.top < window.innerHeight;
+      start();
+    };
     image.addEventListener("load", queue);
     image.addEventListener("error", onError);
     document.addEventListener("visibilitychange", onVisibility);

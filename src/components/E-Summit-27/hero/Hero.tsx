@@ -8,8 +8,6 @@ import FlamePanel from "./FlamePanel";
 import {
   BASE,
   EVENT_DATES,
-  INSTITUTE_EN,
-  INSTITUTE_HI,
   REGISTER_URL,
   VENUE,
   asset,
@@ -68,11 +66,6 @@ export default function Hero() {
             />
           </div>
         </div>
-
-        <p className="e27-rise e27-delay-2 mt-6 text-[11px] font-medium tracking-[0.22em] text-white/70 sm:text-xs">
-          {INSTITUTE_EN}
-          <span lang="hi" className="e27-devanagari mt-1 block">{INSTITUTE_HI}</span>
-        </p>
 
         <div className="e27-rise e27-delay-3 mt-7 flex flex-wrap items-center justify-center gap-3 text-sm text-white/85">
           <span className="inline-flex items-center gap-2 rounded-full border border-[var(--e27-line)] bg-[#050008]/60 px-4 py-2">

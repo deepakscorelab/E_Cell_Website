@@ -266,7 +266,8 @@ const OVERLAP = 2.5;
 const DRAG_THRESHOLD = 5;
 const SPRING = 118;
 const SETTLE_SPEED = 9;
-const CAPTION_SPACE = 76;
+// Reserve both the multi-line speaker caption and the 48px navigation controls.
+const CAPTION_SPACE = 170;
 const SWAP_LENGTH = 700;
 const SWAP_SPREAD = 420;
 const TO_RAD = Math.PI / 180;

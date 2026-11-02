@@ -5,7 +5,7 @@
 // License: REACT-BITS-LICENSE.md. Local additions: frame/pixel caps, batched
 // pointer reads, live reduced-motion handling, and section-scoped interaction.
 
-import { useEffect, useRef, type HTMLAttributes } from 'react';
+import { useEffect, useRef, useState, type HTMLAttributes } from 'react';
 
 import './Cubes.css';
 import { FrameClock } from './firePerformance';
@@ -298,6 +298,7 @@ export const Cubes = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wakeRef = useRef<(() => void) | null>(null);
+  const [contextVersion, setContextVersion] = useState(0);
   const settings: Settings = {
     gridSize: Math.round(clamp(gridSize, 1, 40)),
     gap: clamp(gap, 0, 0.9),
@@ -405,6 +406,8 @@ export const Cubes = ({
     let introClock = settingsRef.current.intro && !reduce ? 0 : 99;
     let raf = 0;
     let visible = true;
+    let contextLost = false;
+    let ready = false;
 
     const allocate = (size: number) => {
       if (grid.size === size) return;
@@ -446,6 +449,7 @@ export const Cubes = ({
     };
 
     const render = () => {
+      if (contextLost) return;
       const s = settingsRef.current;
       const width = canvas.width;
       const height = canvas.height;
@@ -490,6 +494,15 @@ export const Cubes = ({
         gl.cullFace(gl.BACK);
         gl.drawElementsInstanced(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0, grid.count);
         gl.depthMask(true);
+      }
+      // Keep the fallback through intro's zero-size instances; check only until ready.
+      if (!ready && !gl.isContextLost()) {
+        for (let i = 7; i < instances.length; i += 8) {
+          if (instances[i] <= 0) continue;
+          ready = true;
+          container.dataset.ready = 'true';
+          break;
+        }
       }
     };
 
@@ -625,7 +638,7 @@ export const Cubes = ({
 
     const frame = (now: number) => {
       raf = 0;
-      if (!visible || document.hidden) return;
+      if (contextLost || !visible || document.hidden) return;
       const s = settingsRef.current;
       const delta = frameClock.advance(now);
       if (delta === null) { raf = requestAnimationFrame(frame); return; }
@@ -644,10 +657,11 @@ export const Cubes = ({
     };
 
     const wake = () => {
-      if (!raf && visible && !document.hidden) raf = requestAnimationFrame(frame);
+      if (!contextLost && !raf && visible && !document.hidden) raf = requestAnimationFrame(frame);
     };
 
     const resize = () => {
+      if (contextLost) return;
       const s = settingsRef.current;
       const width = Math.max(1, container.clientWidth);
       const height = Math.max(1, container.clientHeight);
@@ -700,6 +714,20 @@ export const Cubes = ({
       onVisibility();
     };
 
+    const onContextLost = (event: Event) => {
+      event.preventDefault(); // Allow WebGL to restore; show the fallback meanwhile.
+      contextLost = true;
+      ready = false;
+      delete container.dataset.ready;
+      cancelAnimationFrame(raf);
+      raf = 0;
+      frameClock.reset();
+    };
+    const onContextRestored = () => {
+      // Recreate shaders and buffers once; never reuse objects from a lost context.
+      setContextVersion(version => version + 1);
+    };
+
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(container);
     const intersection = new IntersectionObserver(entries => {
@@ -712,11 +740,14 @@ export const Cubes = ({
     interaction.addEventListener('pointerdown', onPointerDown as EventListener);
     document.addEventListener('visibilitychange', onVisibility);
     reducedMotion.addEventListener('change', onReducedMotion);
+    canvas.addEventListener('webglcontextlost', onContextLost);
+    canvas.addEventListener('webglcontextrestored', onContextRestored);
     resize();
 
     let lastSize = settingsRef.current.gridSize;
     let lastDpr = settingsRef.current.dpr;
     wakeRef.current = () => {
+      if (contextLost) return;
       const s = settingsRef.current;
       if (s.gridSize !== lastSize || s.dpr !== lastDpr) {
         lastSize = s.gridSize;
@@ -734,6 +765,7 @@ export const Cubes = ({
     return () => {
       cancelAnimationFrame(raf);
       wakeRef.current = null;
+      delete container.dataset.ready;
       resizeObserver.disconnect();
       intersection.disconnect();
       interaction.removeEventListener('pointermove', onPointerMove as EventListener);
@@ -741,13 +773,15 @@ export const Cubes = ({
       interaction.removeEventListener('pointerdown', onPointerDown as EventListener);
       document.removeEventListener('visibilitychange', onVisibility);
       reducedMotion.removeEventListener('change', onReducedMotion);
+      canvas.removeEventListener('webglcontextlost', onContextLost);
+      canvas.removeEventListener('webglcontextrestored', onContextRestored);
       gl.deleteBuffer(vertexBuffer);
       gl.deleteBuffer(indexBuffer);
       gl.deleteBuffer(instanceBuffer);
       gl.deleteVertexArray(vao);
       gl.deleteProgram(shader.program);
     };
-  }, []);
+  }, [contextVersion]);
 
   useEffect(() => {
     wakeRef.current?.();

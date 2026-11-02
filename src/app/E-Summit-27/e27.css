@@ -121,23 +121,81 @@
   opacity: 0.85;
 }
 
-/* ---------- Liquid glass surfaces ---------- */
-/* Static optical highlights: no animated filters or extra canvas per card. */
+/* ---------- Transparent liquid glass surfaces ---------- */
+/* A clear rim defines the box; low-alpha fill lets the shared cubes show through.
+   Only reflection transforms/opacity move. The backdrop blur stays constant. */
 .e27-card,
 .e27-glass {
   position: relative;
-  background-color: rgba(20, 20, 28, 0.12);
-  background-image: linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.008) 42%, rgba(255, 255, 255, 0.025));
-  border: 1px solid rgba(224, 212, 239, 0.18);
-  border-top-color: rgba(224, 212, 239, 0.29);
-  border-left-color: rgba(224, 212, 239, 0.18);
+  isolation: isolate;
+  background-color: rgba(255, 255, 255, 0.025);
+  background-image: linear-gradient(145deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.006) 45%, rgba(221, 204, 255, 0.025));
+  border: 1px solid rgba(225, 211, 245, 0.38);
+  border-top-color: rgba(247, 240, 255, 0.62);
+  border-left-color: rgba(230, 216, 250, 0.46);
   border-radius: var(--e27-radius);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  -webkit-backdrop-filter: blur(4px) saturate(115%);
-  backdrop-filter: blur(4px) saturate(115%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -1px 0 rgba(210, 180, 255, 0.06), 0 8px 28px -18px rgba(0, 0, 0, 0.45);
+  -webkit-backdrop-filter: blur(6px) saturate(125%);
+  backdrop-filter: blur(6px) saturate(125%);
+  transition: border-color 250ms ease;
 }
-/* Nested and continuously moving surfaces keep the glass highlights without
-   repeatedly filtering another composited surface. */
+/* Independent reflection layers stay behind the content and never intercept input.
+   Their scaled bounds stay inside the card, so ribbons/focus rings need no clipping. */
+:is(.e27-card, .e27-glass):not(.e27-glass-inset)::before,
+:is(.e27-card, .e27-glass):not(.e27-glass-inset)::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+}
+:is(.e27-card, .e27-glass):not(.e27-glass-inset)::before {
+  background: linear-gradient(112deg, transparent 20%, rgba(255, 255, 255, 0.12) 44%, rgba(221, 198, 255, 0.045) 55%, transparent 74%);
+  transform: translate3d(-12%, 0, 0) scaleX(0.7);
+  opacity: 0.4;
+}
+:is(.e27-card, .e27-glass):not(.e27-glass-inset)::after {
+  background: radial-gradient(ellipse at 28% 12%, rgba(255, 255, 255, 0.14), rgba(210, 185, 255, 0.035) 38%, transparent 68%);
+  transform: translate3d(-2%, -1%, 0) scale(0.94);
+  opacity: 0.2;
+  transition: transform 650ms cubic-bezier(0.2, 0.7, 0.2, 1), opacity 400ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  :is(.e27-card, .e27-glass):hover {
+    border-color: rgba(237, 224, 255, 0.7);
+    border-top-color: rgba(255, 255, 255, 0.88);
+  }
+  :is(.e27-card, .e27-glass):not(.e27-glass-inset):hover::after {
+    transform: translate3d(2%, 1%, 0) scale(0.94);
+    opacity: 0.9;
+  }
+}
+:is(.e27-card, .e27-glass):focus-within {
+  border-color: rgba(237, 224, 255, 0.7);
+}
+:is(.e27-card, .e27-glass):not(.e27-glass-inset):focus-within::after {
+  opacity: 0.9;
+}
+@keyframes e27-glass-flow {
+  0% { transform: translate3d(-12%, 0, 0) scaleX(0.7); opacity: 0.25; }
+  50% { transform: translate3d(0, 0, 0) scaleX(0.7); opacity: 0.8; }
+  100% { transform: translate3d(12%, 0, 0) scaleX(0.7); opacity: 0.25; }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    :is(.e27-card, .e27-glass):not(.e27-glass-inset) {
+      view-timeline-name: --e27-glass-flow;
+      view-timeline-axis: block;
+    }
+    :is(.e27-card, .e27-glass):not(.e27-glass-inset)::before {
+      animation: e27-glass-flow linear both;
+      animation-timeline: --e27-glass-flow;
+      animation-range: entry 0% exit 100%;
+    }
+  }
+}
+/* Nested surfaces do not filter a second backdrop. */
 .e27-glass-inset,
 .e27-marquee .e27-card {
   -webkit-backdrop-filter: none;
@@ -145,8 +203,8 @@
 }
 @media (max-width: 767px), (pointer: coarse) {
   .e27-card, .e27-glass {
-    -webkit-backdrop-filter: blur(2px);
-    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(3px) saturate(115%);
+    backdrop-filter: blur(3px) saturate(115%);
   }
   .e27-glass-inset, .e27-marquee .e27-card {
     -webkit-backdrop-filter: none;
@@ -154,7 +212,22 @@
   }
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .e27-card, .e27-glass { background-color: rgba(28, 27, 36, 0.88); }
+  .e27-card, .e27-glass { background-color: rgba(22, 13, 33, 0.45); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .e27-card, .e27-glass,
+  :is(.e27-card, .e27-glass):not(.e27-glass-inset)::before,
+  :is(.e27-card, .e27-glass):not(.e27-glass-inset)::after {
+    animation: none;
+    transition: none;
+  }
+  :is(.e27-card, .e27-glass):not(.e27-glass-inset)::before,
+  :is(.e27-card, .e27-glass):not(.e27-glass-inset)::after,
+  :is(.e27-card, .e27-glass):not(.e27-glass-inset):hover::after,
+  :is(.e27-card, .e27-glass):not(.e27-glass-inset):focus-within::after {
+    transform: none;
+    opacity: 0.25;
+  }
 }
 .e27-tilt-card {
   transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -186,14 +259,18 @@
 .e27-cubes-fallback {
   position: absolute;
   inset: 0;
-  opacity: 0.35;
+  opacity: 0.18;
   background: repeating-linear-gradient(30deg, transparent 0 64px, #9030f0 65px 66px, transparent 67px 130px),
     repeating-linear-gradient(150deg, transparent 0 64px, #6211bf 65px 66px, transparent 67px 130px);
 }
 .e27-site-cubes .e27-cubes-field {
   position: absolute;
   inset: 0;
-  opacity: 0.75;
+  opacity: 0.44;
+}
+/* The static placeholder must not add another grid over the live cubes. */
+.e27-site-cubes:has(.e27-cubes-field[data-ready="true"]) .e27-cubes-fallback {
+  visibility: hidden;
 }
 .e27-hero-flame { pointer-events: none; }
 
@@ -465,8 +542,7 @@
 .e27-hero-meta > span { display: inline-flex; align-items: center; gap: 8px; }
 .e27-section-heading { max-width: var(--e27-content-width); margin-inline: auto; padding-inline: 24px; }
 .e27-event-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 40px; }
-.e27-event-card { display: flex; flex-direction: column; height: 100%; padding: clamp(24px, 3vw, 36px); transition: border-color .2s, background-color .2s; }
-.e27-event-card:hover { border-color: rgba(197,165,246,.55); background-color: rgba(85,54,119,.14); }
+.e27-event-card { display: flex; flex-direction: column; height: 100%; padding: clamp(24px, 3vw, 36px); }
 .e27-event-category { color: var(--e27-magenta); font-size: 13px; font-weight: 600; }
 .e27-event-card h3 { margin-top: 18px; font-size: clamp(1.4rem, 2vw, 1.75rem); line-height: 1.25; letter-spacing: -.02em; }
 .e27-event-card p { margin-top: 12px; max-width: 52ch; font-size: 16px; line-height: 1.7; color: var(--e27-muted); flex: 1; }

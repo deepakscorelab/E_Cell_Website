@@ -8,13 +8,13 @@ Surface: the existing E-Summit 2027 marketing site (Persuade), with Team and Spo
 - Preserve names, contacts, institutional descriptions, data, speaker history and event content.
 
 ## Findings and changes
-- Keep the shared cube field clearly visible at .75 opacity. The earlier .30 opacity and dark vignette made it look blacked out; remove the vignette and the tile floor's dark wash. The static fallback also stays visible across the viewport. Quieter tile-floor lines keep the same motion.
+- Keep the shared cubes visible at .44 opacity with no dark vignette or tile-floor wash. Thinner edges and gentler rotation reduce distraction. Hide the static placeholder only after the live cube renderer is ready, avoiding overlapping grids.
 - Repeated kickers, two-tone titles, gradient rules and arbitrary event numbers added decoration without conveying structure. Remove decorative kickers/rules/numbers; make headings one clear foreground tone.
 - Three equal institutional cards produced narrow, dense paragraphs with uneven heights. Use wide glass rows with identity on the left and 16–17px body copy up to 70ch on the right; stack naturally on mobile.
 - Five floating statistic cards repeated the same container. Present the existing values in one ruled band. Keep the count-up effect.
 - Contact information was fragmented across several centered cards. Group the existing email and coordinator details into a single glass surface without nested cards.
 - Use a restrained type scale: section headings 2.15–3.5rem, display headings no larger than 6rem, neutral-white headings, readable lavender secondary text and a solid lilac primary button with dark text.
-- Establish shared section spacing (4–7rem), content width (1184px), 16px surface corners, quieter glass rims and 48px primary controls. Preserve obvious focus states.
+- Establish shared section spacing (4–7rem), content width (1184px), 16px surface corners and 48px primary controls. Glass surfaces have a clear pale-purple boundary, 2.5% white base tint and constant 6px blur (3px on mobile). Scroll-linked and hover reflections move behind the text using only transforms/opacity; no new scroll handler or animation loop. Reduced motion keeps static glass. Preserve obvious focus states.
 - Keep event cards as a two-column catalog with meaningful category labels; remove decorative numbering and 3D tilting of reading surfaces.
 - Explore Events now opens the existing homepage event section. Registration and individual event-detail destinations remain the existing unfinished routes; this design pass does not add registration functionality.
 

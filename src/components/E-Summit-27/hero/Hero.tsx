@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CalendarDays, MapPin, ArrowRight } from "lucide-react";
 import { observeMotionActivity } from "../motionActivity";
 import FlamePanel from "./FlamePanel";
+import DotMorphWordmark from "./DotMorphWordmark";
 import {
   BASE,
   EVENT_DATES,
@@ -52,19 +53,12 @@ export default function Hero() {
           E-Summit&apos;27 — Igniting the Unwritten
         </h1>
 
-        {/* The wordmark image already contains the "IGNITING THE UNWRITTEN" tagline. */}
+        {/* Dots form the original wordmark, then the sharp source artwork takes over. */}
         <div className="mt-2">
-          <div className="e27-rise e27-delay-1">
-            <img
-              src={asset("esummit27-wordmark.webp")}
-              alt="E-Summit 27 — Igniting the Unwritten"
-              width={1218}
-              height={219}
-              fetchPriority="high"
-              decoding="async"
-              className="h-auto w-[min(88vw,620px)]"
-            />
-          </div>
+          <DotMorphWordmark
+            src={asset("esummit27-wordmark.webp")}
+            alt="E-Summit 27 — Igniting the Unwritten"
+          />
         </div>
 
         <div className="e27-rise e27-delay-3 mt-7 e27-hero-meta">

@@ -1,6 +1,6 @@
 import { Mail, Phone } from "lucide-react";
 import Reveal from "../Reveal";
-import { CONTACT_EMAIL, COORDINATORS } from "@/context/E-Summit-27/constants";
+import { CONTACT_EMAIL, CONTACT_EMAILS, COORDINATORS } from "@/context/E-Summit-27/constants";
 import "./EditorialSections.css";
 
 export default function Contact() {
@@ -22,9 +22,11 @@ export default function Contact() {
           <div className="e27-card e27-contact-panel">
             <div className="e27-contact-email">
               <p className="text-sm text-[var(--e27-muted)]">Email</p>
-              <a href={`mailto:${CONTACT_EMAIL}`} className="e27-contact-address">
-                {CONTACT_EMAIL}
-              </a>
+              {CONTACT_EMAILS.map((email) => (
+                <a key={email} href={`mailto:${email}`} className="e27-contact-address">
+                  {email}
+                </a>
+              ))}
               <a href={`mailto:${CONTACT_EMAIL}`} className="e27-btn e27-btn-primary mt-6">
                 <Mail size={16} aria-hidden="true" /> Send an email
               </a>

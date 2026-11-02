@@ -50,7 +50,8 @@ export const NAV_LINKS: NavLink[] = [
   { label: "Contact", href: `${BASE}#contact` },
 ];
 
-export const CONTACT_EMAIL = "ecell@iitrpr.ac.in";
+export const CONTACT_EMAILS = ["e-summit@iitrpr.ac.in", "ecell@iitrpr.ac.in"] as const;
+export const CONTACT_EMAIL = CONTACT_EMAILS[0];
 
 export type Coordinator = {
   name: string;

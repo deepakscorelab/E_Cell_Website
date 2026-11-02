@@ -1,7 +1,7 @@
 import { Mail, Phone } from "lucide-react";
 import { FaLinkedinIn } from "react-icons/fa";
 import Reveal from "../Reveal";
-import { CONTACT_EMAIL, COORDINATORS } from "@/context/E-Summit-27/constants";
+import { CONTACT_EMAILS, COORDINATORS } from "@/context/E-Summit-27/constants";
 import { headMembers } from "@/context/E-Summit-27/TeamData";
 
 // The Sponsorship Heads from the team data (currently two).
@@ -28,12 +28,18 @@ export default function BecomeSponsor() {
               <p className="mt-4 max-w-md text-base leading-7 text-[var(--e27-muted)]">
                 Tell us what your brand wants to achieve and we&apos;ll shape a package around it.
               </p>
-              <a
-                href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("E-Summit'27 Sponsorship")}`}
-                className="e27-btn e27-btn-primary mt-8"
-              >
-                <Mail size={16} aria-hidden="true" /> {CONTACT_EMAIL}
-              </a>
+              <div className="mt-8 flex flex-col items-start gap-3">
+                {CONTACT_EMAILS.map((email, index) => (
+                  <a
+                    key={email}
+                    href={`mailto:${email}?subject=${encodeURIComponent("E-Summit'27 Sponsorship")}`}
+                    className={`e27-btn max-w-full text-left ${index === 0 ? "e27-btn-primary" : "e27-btn-ghost"}`}
+                  >
+                    <Mail size={16} className="shrink-0" aria-hidden="true" />
+                    <span className="break-all">{email}</span>
+                  </a>
+                ))}
+              </div>
             </div>
 
             <div className="space-y-8">

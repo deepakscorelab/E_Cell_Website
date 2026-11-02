@@ -19,7 +19,11 @@ Surface: the existing E-Summit 2027 marketing site (Persuade), with Team and Spo
 - Explore Events now opens the existing homepage event section. Registration and individual event-detail destinations remain the existing unfinished routes; this design pass does not add registration functionality.
 
 ## Motion and verification
-No new renderer or dependency. Existing visibility pausing, reduced-motion handling, frame budgets and lazy loading remain. Typography and visual hierarchy are improved without adding animation cost.
+Glass styling adds no renderer or dependency. Existing visibility pausing, reduced-motion handling, frame budgets and lazy loading remain.
+
+The home-page dots-to-text experiment samples the original wordmark into a bounded 2D canvas (1100 dots desktop, 650 mobile, DPR at most 1.5). It runs once for 2.2 seconds at up to 60fps desktop/30fps mobile, settles into the sharp original image, and stops scheduling frames. Replay is explicit. Hidden tabs, offscreen state, resizing, failures and reduced-motion preferences reveal the static image. The flame emblem remains in place; the two corner fire panels sit 22–40px above their previous position.
+
+Shared email displays list e-summit@iitrpr.ac.in first and ecell@iitrpr.ac.in second. Primary contact and sponsorship email actions target the E-Summit address.
 
 Impeccable's launcher was unavailable in this environment; its polish and craft guidance was applied through direct source and browser review. No automated Impeccable detector result is claimed.
 

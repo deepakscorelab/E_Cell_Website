@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { CONTACT_EMAIL, INSTITUTE_EN, NAV_LINKS, asset } from "@/context/E-Summit-27/constants";
+import { CONTACT_EMAILS, INSTITUTE_EN, NAV_LINKS, asset } from "@/context/E-Summit-27/constants";
 
 export default function Footer27() {
   const isHome = usePathname().replace(/\/$/, "").endsWith("/E-Summit-27");
@@ -20,9 +20,15 @@ export default function Footer27() {
             E-SUMMIT <span className="e27-accent">27</span>
           </p>
           <p className="mt-2 max-w-sm text-sm text-[var(--e27-muted)]">{INSTITUTE_EN}</p>
-          <a href={`mailto:${CONTACT_EMAIL}`} className="mt-3 inline-block text-sm text-[var(--e27-lavender)]">
-            {CONTACT_EMAIL}
-          </a>
+          <ul className="mt-3 space-y-2">
+            {CONTACT_EMAILS.map((email) => (
+              <li key={email}>
+                <a href={`mailto:${email}`} className="break-all text-sm text-[var(--e27-lavender)]">
+                  {email}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <nav aria-label="Footer">

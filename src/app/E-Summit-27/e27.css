@@ -190,6 +190,7 @@
     }
     :is(.e27-card, .e27-glass):not(.e27-glass-inset)::before {
       animation: e27-glass-flow linear both;
+      animation-duration: auto;
       animation-timeline: --e27-glass-flow;
       animation-range: entry 0% exit 100%;
     }
@@ -417,6 +418,12 @@
   transform: translateY(var(--e27-reveal-y, 24px));
   transition: none;
 }
+/* An opacity-animated ancestor isolates backdrop-filter from the cubes.
+   Glass still slides into view; only non-glass content uses the fade. */
+.e27-reveal:has(.e27-card, .e27-glass) {
+  opacity: 1;
+  transition-property: transform;
+}
 @media (prefers-reduced-motion: reduce) {
   .e27-reveal, .e27-reveal[data-reveal-pending="true"] {
     opacity: 1;
@@ -499,6 +506,10 @@
   from { opacity: 0.15; transform: translate3d(0, var(--e27-reveal-y, 24px), 0); }
   to { opacity: 1; transform: none; }
 }
+@keyframes e27-glass-reveal {
+  from { transform: translate3d(0, var(--e27-reveal-y, 24px), 0); }
+  to { transform: none; }
+}
 @supports (animation-timeline: scroll(root block)) {
   .e27-scroll-progress {
     animation: e27-reading-progress linear both;
@@ -512,6 +523,9 @@
       animation: e27-scroll-reveal linear both;
       animation-timeline: view(block);
       animation-range: entry 0% entry 85%;
+    }
+    .e27-reveal:has(.e27-card, .e27-glass) {
+      animation-name: e27-glass-reveal;
     }
     .e27-reveal:focus-within {
       animation: none;

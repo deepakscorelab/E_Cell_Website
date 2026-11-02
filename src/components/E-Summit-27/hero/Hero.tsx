@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Link from "next/link";
-import { CalendarDays, MapPin, ArrowRight } from "lucide-react";
+import { CalendarDays, MapPin } from "lucide-react";
 import { observeMotionActivity } from "../motionActivity";
 import FlamePanel from "./FlamePanel";
 import HeroMorph from "./HeroMorph";
+import RegistrationSpark from "./RegistrationSpark";
 import { useSiteIntro } from "../SiteIntro";
 import {
   BASE,
@@ -71,9 +71,7 @@ export default function Hero() {
         </div>
 
         <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-          <Link data-morph-control href={REGISTER_URL} className="e27-btn e27-btn-primary">
-            <span data-morph-text>Register Now</span> <ArrowRight size={16} aria-hidden="true" />
-          </Link>
+          <RegistrationSpark href={REGISTER_URL} />
           <a data-morph-control href={`${BASE}#events`} className="e27-btn e27-btn-ghost">
             <span data-morph-text>Explore Events</span>
           </a>

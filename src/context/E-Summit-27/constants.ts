@@ -29,6 +29,8 @@ export const EVENT_NAME = "E-Summit'27";
 export const TAGLINE = "IGNITING THE UNWRITTEN";
 
 export const EVENT_DATES = "23–24 January 2027";
+export const EVENT_START_DATE = "2027-01-23";
+export const EVENT_END_DATE = "2027-01-24";
 export const VENUE = "IIT Ropar";
 
 // TODO: replace with the real registration route / form URL.

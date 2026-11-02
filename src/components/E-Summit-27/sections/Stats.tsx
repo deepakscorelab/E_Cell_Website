@@ -1,4 +1,5 @@
 import AnimatedNumbers from "../AnimatedNumbers";
+import SplitHeading from "../SplitHeading";
 import { STATS } from "@/context/E-Summit-27/homeData";
 import "./EditorialSections.css";
 
@@ -12,9 +13,9 @@ export default function Stats() {
       style={{ containIntrinsicSize: "auto 360px" }}
     >
       <div className="mx-auto max-w-6xl">
-        <h2 id="e27-stats-title" className="e27-heading text-3xl sm:text-4xl">
+        <SplitHeading id="e27-stats-title" className="e27-heading text-3xl sm:text-4xl">
           Our reach in <span className="text-white">all means</span>
-        </h2>
+        </SplitHeading>
 
         <AnimatedNumbers className="e27-reach-band">
           {STATS.map((s) => (

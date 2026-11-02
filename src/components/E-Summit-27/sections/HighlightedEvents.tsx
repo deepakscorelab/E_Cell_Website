@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import Reveal from "../Reveal";
+import SplitHeading from "../SplitHeading";
+import EventConstellation from "./EventConstellation";
 import { highlightedEvents } from "@/context/E-Summit-27/homeData";
 import { BASE } from "@/context/E-Summit-27/constants";
 
@@ -13,16 +15,16 @@ export default function HighlightedEvents() {
       style={{ containIntrinsicSize: "auto 1100px" }}
     >
       <div className="mx-auto max-w-7xl">
-        <Reveal className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
+        <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
           <div>
-            <h2 id="e27-events-title" className="e27-heading text-4xl sm:text-6xl">
+            <SplitHeading id="e27-events-title" className="e27-heading text-4xl sm:text-6xl">
               Highlighted <span className="text-white">events</span>
-            </h2>
+            </SplitHeading>
           </div>
           <Link href={`${BASE}/events`} className="e27-btn e27-btn-ghost">
             View all events <ArrowRight size={16} aria-hidden="true" />
           </Link>
-        </Reveal>
+        </div>
 
         <ul className="e27-event-grid">
           {highlightedEvents.map((ev, i) => (
@@ -36,6 +38,7 @@ export default function HighlightedEvents() {
                     <span className="e27-event-category">
                       {ev.tag}
                     </span>
+                    <EventConstellation category={ev.tag} />
                   </div>
                   <h3>{ev.title}</h3>
                   <p>{ev.description}</p>

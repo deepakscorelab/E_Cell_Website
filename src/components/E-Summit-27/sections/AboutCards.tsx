@@ -1,4 +1,5 @@
 import Reveal from "../Reveal";
+import SplitHeading from "../SplitHeading";
 import { ABOUT_CARDS } from "@/context/E-Summit-27/homeData";
 import { asset } from "@/context/E-Summit-27/constants";
 import "./EditorialSections.css";
@@ -12,11 +13,9 @@ export default function AboutCards() {
       style={{ containIntrinsicSize: "auto 1400px" }}
     >
       <div className="mx-auto max-w-6xl">
-        <Reveal>
-          <h2 id="e27-about-title" className="e27-heading text-4xl sm:text-6xl">
-            About <span className="text-white">us</span>
-          </h2>
-        </Reveal>
+        <SplitHeading id="e27-about-title" className="e27-heading text-4xl sm:text-6xl">
+          About <span className="text-white">us</span>
+        </SplitHeading>
 
         <div className="e27-institution-list">
           {ABOUT_CARDS.map((card) => (

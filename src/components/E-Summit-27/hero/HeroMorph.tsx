@@ -3,7 +3,10 @@
 import { useLayoutEffect, useRef, type ReactNode } from "react";
 import { FrameClock } from "./firePerformance";
 
-type Props = { children: ReactNode; active: boolean; onComplete: () => void };
+type Props = {
+  children: ReactNode; active: boolean; onComplete: () => void;
+  duration?: number; maxDots?: number; mobileMaxDots?: number;
+};
 type Point = { x: number; y: number; color: string };
 type Dot = Point & { sx: number; sy: number; phase: number; delay: number };
 type Group = { points: Point[]; rect: DOMRect; image: boolean };
@@ -28,7 +31,13 @@ function paintText(context: CanvasRenderingContext2D, element: HTMLElement, widt
   const measuredWidth = metrics.width + Math.max(0, text.length - 1) * spacing;
   // Preserve fit at responsive sizes; the source text remains the final rendering.
   const scale = Math.min(1, width / Math.max(1, measuredWidth));
+  const renderedWidth = measuredWidth * scale;
+  const alignRight = style.textAlign === "right" ||
+    (style.textAlign === "end" && style.direction !== "rtl") ||
+    (style.textAlign === "start" && style.direction === "rtl");
+  const origin = style.textAlign === "center" ? (width - renderedWidth) / 2 : alignRight ? width - renderedWidth : 0;
   context.save();
+  context.translate(origin, 0);
   context.scale(scale, 1);
   if (!spacing) context.fillText(text, 0, baseline);
   else {
@@ -42,7 +51,7 @@ function paintText(context: CanvasRenderingContext2D, element: HTMLElement, widt
 }
 
 /** One finite canvas morphs the brand, metadata and native controls together. */
-export default function HeroMorph({ children, active, onComplete }: Props) {
+export default function HeroMorph({ children, active, onComplete, duration = 1700, maxDots = 2200, mobileMaxDots = 1300 }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -125,7 +134,7 @@ export default function HeroMorph({ children, active, onComplete }: Props) {
         if (points.length) groups.push({ points, rect, image: isImage });
       }
       if (!groups.length) { finish(); return restore; }
-      const budget = mobile ? 1300 : 2200;
+      const budget = mobile ? mobileMaxDots : maxDots;
       const minimum = Math.min(mobile ? 85 : 120, Math.floor(budget / groups.length));
       const available = Math.max(0, budget - minimum * groups.length);
       const totalWeight = groups.reduce((sum, group) => sum + Math.sqrt(group.points.length), 0);
@@ -178,7 +187,7 @@ export default function HeroMorph({ children, active, onComplete }: Props) {
         if (finished) return;
         if (document.hidden || reduce.matches) { finish(); return; }
         if (clock.advance(now) === null) { raf = requestAnimationFrame(frame); return; }
-        const progress = clamp((now - start) / 1700);
+        const progress = clamp((now - start) / duration);
         draw(progress);
         if (progress < 1) raf = requestAnimationFrame(frame);
         else finish();
@@ -205,7 +214,7 @@ export default function HeroMorph({ children, active, onComplete }: Props) {
       reduce.removeEventListener("change", onPreference);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [active]);
+  }, [active, duration, maxDots, mobileMaxDots]);
 
   return <div ref={hostRef} className="e27-hero-morph" data-morph-phase="idle">
     <div ref={contentRef} className="e27-hero-morph-content">{children}</div>

@@ -1,4 +1,4 @@
-import Reveal from "../Reveal";
+import SplitHeading from "../SplitHeading";
 import Marquee from "../Marquee";
 import { SPONSOR_LOGOS } from "@/context/E-Summit-27/homeData";
 import { asset } from "@/context/E-Summit-27/constants";
@@ -31,11 +31,11 @@ export default function Sponsors() {
       className="e27-section e27-section-bg overflow-hidden py-24 lg:py-32"
       style={{ containIntrinsicSize: "auto 640px" }}
     >
-      <Reveal className="px-4 text-center">
-        <h2 id="e27-sponsors-title" className="e27-heading text-4xl sm:text-6xl">
+      <div className="px-4 text-center">
+        <SplitHeading id="e27-sponsors-title" className="e27-heading text-4xl sm:text-6xl">
           Previous <span className="text-white">sponsors</span>
-        </h2>
-      </Reveal>
+        </SplitHeading>
+      </div>
 
       <div className="mt-14 flex flex-col gap-5">
         <Marquee label="Previous sponsors, row 1" duration={55}>

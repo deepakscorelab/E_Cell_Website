@@ -1,5 +1,6 @@
 import { Mail, Phone } from "lucide-react";
 import Reveal from "../Reveal";
+import SplitHeading from "../SplitHeading";
 import { CONTACT_EMAIL, CONTACT_EMAILS, COORDINATORS } from "@/context/E-Summit-27/constants";
 import "./EditorialSections.css";
 
@@ -12,11 +13,9 @@ export default function Contact() {
       style={{ containIntrinsicSize: "auto 650px" }}
     >
       <div className="mx-auto max-w-6xl">
-        <Reveal>
-          <h2 id="e27-contact-title" className="e27-heading text-4xl sm:text-6xl">
-            Contact <span className="text-white">us</span>
-          </h2>
-        </Reveal>
+        <SplitHeading id="e27-contact-title" className="e27-heading text-4xl sm:text-6xl">
+          Contact <span className="text-white">us</span>
+        </SplitHeading>
 
         <Reveal className="mt-10 sm:mt-12">
           <div className="e27-card e27-contact-panel">

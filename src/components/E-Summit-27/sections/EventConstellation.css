@@ -1,0 +1,48 @@
+.e27-event-constellation {
+  display: block;
+  flex: 0 0 auto;
+  width: 72px;
+  height: 58px;
+  overflow: visible;
+  pointer-events: none;
+}
+.e27-constellation-line {
+  fill: none;
+  stroke: #b68dff;
+  stroke-width: 1.35;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  opacity: 0.8;
+}
+.e27-constellation-point {
+  fill: #e1cfff;
+  stroke: #9c55eb;
+  stroke-width: 0.75;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .e27-event-constellation[data-constellation-phase="waiting"] .e27-constellation-line { stroke-dashoffset: 1; opacity: 0; }
+  .e27-event-constellation[data-constellation-phase="waiting"] .e27-constellation-point { opacity: 0; }
+  .e27-event-constellation[data-constellation-phase="drawing"] .e27-constellation-line {
+    animation: e27-constellation-connect 850ms cubic-bezier(.22,.7,.25,1) var(--e27-constellation-delay) both;
+  }
+  .e27-event-constellation[data-constellation-phase="drawing"] .e27-constellation-point {
+    animation: e27-constellation-appear 500ms ease-out var(--e27-constellation-delay) both;
+  }
+}
+@keyframes e27-constellation-connect {
+  from { stroke-dashoffset: 1; opacity: 0; }
+  15% { opacity: 0.8; }
+  to { stroke-dashoffset: 0; opacity: 0.8; }
+}
+@keyframes e27-constellation-appear {
+  from { opacity: 0; transform: scale(.45); }
+  65% { opacity: 1; transform: scale(1.2); }
+  to { opacity: 1; transform: scale(1); }
+}
+@media (max-width: 640px) {
+  .e27-event-constellation { width: 64px; height: 52px; }
+}

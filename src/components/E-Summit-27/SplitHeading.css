@@ -1,0 +1,6 @@
+/* Styling stays with the native heading. Only generated characters move briefly. */
+.e27-split-heading .e27-split-word { white-space: nowrap; }
+.e27-split-heading .e27-split-char { backface-visibility: hidden; }
+@media (prefers-reduced-motion: reduce) {
+  .e27-split-heading .e27-split-char { opacity: 1 !important; transform: none !important; }
+}

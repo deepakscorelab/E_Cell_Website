@@ -1,0 +1,13 @@
+.e27-root .e27-section.e27-countdown-section { padding-block: 32px; contain-intrinsic-size: auto 300px; }
+.e27-countdown-panel { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 32px; padding: clamp(24px, 4vw, 44px); }
+.e27-root .e27-countdown-copy h2.e27-heading { margin-top: 12px; max-width: 20ch; font-size: clamp(25px, 3.5vw, 38px); }
+.e27-countdown-date { margin-top: 16px; color: var(--e27-muted); font-size: 14px; }
+.e27-countdown-number { text-align: center; min-width: 180px; padding-left: 32px; border-left: 1px solid var(--e27-line); }
+.e27-countdown-value { display: inline-block; min-width: 2.3ch; color: var(--e27-lavender); font-size: clamp(72px, 10vw, 112px); font-weight: 600; letter-spacing: -.065em; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.e27-countdown-thanks { font-size: clamp(32px, 5vw, 52px); letter-spacing: -.035em; }
+.e27-countdown-caption { color: var(--e27-muted); font-size: 13px; letter-spacing: .05em; }
+@media (max-width: 600px) {
+  .e27-countdown-panel { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .e27-countdown-number { border-left: 0; border-top: 1px solid var(--e27-line); padding: 18px 0 0; }
+  .e27-countdown-copy h2 { max-width: 22ch; }
+}

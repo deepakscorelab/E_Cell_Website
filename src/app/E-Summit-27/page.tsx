@@ -1,4 +1,6 @@
 import Hero from "@/components/E-Summit-27/hero/Hero";
+import SummitCountdown from "@/components/E-Summit-27/sections/SummitCountdown";
+import SummitJourney from "@/components/E-Summit-27/sections/SummitJourney";
 import WhatIs from "@/components/E-Summit-27/sections/WhatIs";
 import Stats from "@/components/E-Summit-27/sections/Stats";
 import AboutCards from "@/components/E-Summit-27/sections/AboutCards";
@@ -11,11 +13,13 @@ export default function ESummit27Home() {
   return (
     <main id="top">
       <Hero />
+      <SummitCountdown />
       <WhatIs />
       <Stats />
       <AboutCards />
       <Speakers />
       <HighlightedEvents />
+      <SummitJourney />
       <Sponsors />
       <Contact />
     </main>

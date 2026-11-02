@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * The fire scene, used in the bounded panel beneath the hero actions.
+ * The fire scene, used in the two bounded bottom-corner panels.
  * Plain three (r167) in a single useEffect: one fire quad + GPU embers + instanced shards.
  * No React state in the loop; refs + uniforms only; no per-frame allocation.
  */
@@ -22,6 +22,8 @@ export type FireCanvasProps = {
   /** Target pointer (-1…1) written by Hero; lerped here. */
   pointer: RefObject<PointerTarget>;
   mobile: boolean;
+  /** Optional per-instance cap; corner flames share the original total pixel budget. */
+  maxPixels?: number;
   /** First frame rendered → Hero fades the canvas in. */
   onReady: () => void;
   /** Too slow / context lost → Hero unmounts us and keeps the poster. */
@@ -40,7 +42,7 @@ function mulberry32(seed: number) {
   };
 }
 
-export default function FireCanvas({ pointer, mobile, onReady, onDisable }: FireCanvasProps) {
+export default function FireCanvas({ pointer, mobile, maxPixels = Infinity, onReady, onDisable }: FireCanvasProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   // Keep latest callbacks without re-running the effect.
   const cbRef = useRef({ onReady, onDisable });
@@ -176,6 +178,7 @@ export default function FireCanvas({ pointer, mobile, onReady, onDisable }: Fire
       const h = Math.max(1, host.clientHeight);
       const pr = Math.min(
         firePixelRatio(w, h, window.devicePixelRatio, quality.tier, mobile),
+        Math.sqrt(Math.max(1, maxPixels) / (w * h)),
         renderer.capabilities.maxTextureSize / Math.max(w, h),
       );
       renderer.setPixelRatio(pr);
@@ -295,7 +298,7 @@ export default function FireCanvas({ pointer, mobile, onReady, onDisable }: Fire
       renderer.forceContextLoss();
       canvas.remove();
     };
-  }, [mobile, pointer]);
+  }, [mobile, pointer, maxPixels]);
 
   return <div ref={hostRef} className="absolute inset-0" aria-hidden="true" />;
 }

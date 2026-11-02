@@ -212,15 +212,23 @@
 }
 .e27-hero-flame { pointer-events: none; }
 
-/* Moving flame below the actions; the E-shaped brand mark stays above the title. */
+/* Moving flames in both hero corners; the E-shaped brand mark stays above the title. */
 .e27-fire-panel {
-  position: relative;
-  width: min(100%, 640px);
+  position: absolute;
+  bottom: 0;
+  z-index: 1;
+  width: min(42vw, 580px);
   height: clamp(180px, 25svh, 240px);
-  margin-top: 1rem;
   overflow: hidden;
   pointer-events: none;
   mask-image: radial-gradient(ellipse at 50% 48%, #000 20%, transparent 75%);
+}
+.e27-fire-panel--left { left: -2vw; }
+.e27-fire-panel--right { right: -2vw; transform: scaleX(-1); }
+@media (max-width: 640px) {
+  .e27-fire-panel { width: 56vw; height: 180px; }
+  .e27-fire-panel--left { left: -6vw; }
+  .e27-fire-panel--right { right: -6vw; }
 }
 .e27-fire-poster {
   position: absolute;

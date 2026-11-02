@@ -1,7 +1,6 @@
-/**
- * E-Summit'27 team data — typed copy of the previous (2026) team data.
- * Names, positions, photos, LinkedIn and email values are unchanged.
- */
+/** E-Summit 2027 overall coordinators share the contact roster.
+ * Department data otherwise remains the existing imported roster. */
+import { COORDINATORS } from "./constants";
 
 export type Member = {
   name: string;
@@ -20,25 +19,13 @@ export function cldThumb(url: string, w = 400): string {
   return url.replace("/image/upload/", `/image/upload/w_${w},q_auto,f_auto,c_fill,g_face,ar_4:5/`);
 }
 
-// Core Team (3 members)
-export const coreTeamMembers: Member[] = [
-  {
-    name: "Animesh Anand",
-    position: "Overall Coordinator",
-    image: "https://res.cloudinary.com/doxe1rjaj/image/upload/v1773594448/Gemini_Generated_Image_gj3plxgj3plxgj3p_-_Animesh_Anand_f1tsav.png",
-    linkedin: "https://www.linkedin.com/in/animesh-anand-iitrpr?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-    email: "2023ceb1024@iitrpr.ac.in",
-    // signature: "/animesh_sign.png"
-  },
-  {
-    name: "Dikshant Parashar",
-    position: "Overall Coordinator",
-    image: "https://res.cloudinary.com/doxe1rjaj/image/upload/v1762323028/Dikshant_-_Dikshant_Parashar_ditstp.jpg",
-    linkedin: "https://www.linkedin.com/in/dikshant-parashar-31a0a2259?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-    email: "dikshantparashar04@gmail.com",
-  },
-
-];
+export const coreTeamMembers: Member[] = COORDINATORS.map(({ name, image, linkedin, email }) => ({
+  name,
+  image,
+  linkedin,
+  email,
+  position: "Overall Coordinator",
+}));
 
 // Department Heads
 export const headMembers: Member[] = [
@@ -182,13 +169,6 @@ export const headMembers: Member[] = [
     image: "https://res.cloudinary.com/doxe1rjaj/image/upload/v1773584878/WhatsApp_Image_2026-03-05_at_14.24.09_-_Adarsh_Kumar_cn14eg.jpg",
     linkedin: "https://www.linkedin.com/in/adarsh-kumar-2a8809286/",
     email: "2023chb1058@iitrpr.ac.in",
-  },
-  {
-    name: "Chaitanya Kalme",
-    position: "Publicity Head",
-    image: "https://res.cloudinary.com/doxe1rjaj/image/upload/v1773574665/Chaitanya_-_Chaitanya_Kalme_xvgkjk.jpg",
-    linkedin: "https://www.linkedin.com/in/chaitanya-kalme-1a610a346",
-    email: "2023csb1112@iitrpr.ac.in",
   },
   {
     name: "Lakshya Vajpayee",

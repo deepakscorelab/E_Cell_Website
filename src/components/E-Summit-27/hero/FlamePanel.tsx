@@ -5,7 +5,7 @@ import FireCanvasLoader from "./FireCanvasLoader";
 import { observeMotionActivity } from "../motionActivity";
 
 /** The original moving fire, separate from the E-shaped brand logo above. */
-export default function FlamePanel() {
+export default function FlamePanel({ side }: { side: "left" | "right" }) {
   const host = useRef<HTMLDivElement>(null);
   const pointer = useRef({ x: 0, y: 0 });
   const [mounted, setMounted] = useState(false);
@@ -46,11 +46,11 @@ export default function FlamePanel() {
   }, []);
 
   return (
-    <div ref={host} className="e27-fire-panel" aria-hidden="true">
+    <div ref={host} className={`e27-fire-panel e27-fire-panel--${side}`} aria-hidden="true">
       <div className="e27-fire-poster" />
       <div className="e27-fire-scene" data-ready={ready}>
-        {/* Use the existing compact 30 fps / 350k-pixel tier alongside Cubes. */}
-        {mounted && <FireCanvasLoader pointer={pointer} mobile={true} onReady={onReady} onDisable={onDisable} />}
+        {/* Two 30 fps scenes share the previous 350k-pixel budget. */}
+        {mounted && <FireCanvasLoader pointer={pointer} mobile={true} maxPixels={175_000} onReady={onReady} onDisable={onDisable} />}
       </div>
     </div>
   );

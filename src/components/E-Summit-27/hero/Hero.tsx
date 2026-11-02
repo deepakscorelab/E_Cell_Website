@@ -30,8 +30,10 @@ export default function Hero() {
         <div className="e27-floor"><div className="e27-floor-track" /></div>
       </div>
       <div className="e27-horizon" aria-hidden="true" />
+      <FlamePanel side="left" />
+      <FlamePanel side="right" />
       {/* ---------- content ---------- */}
-      <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-5xl flex-col items-center justify-center px-4 pb-8 pt-32 text-center">
+      <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-5xl flex-col items-center justify-center px-4 pb-44 pt-32 text-center sm:pb-40 lg:pb-36">
 
         <div className="e27-hero-flame mb-6" aria-hidden="true">
           <div className="e27-ignite">
@@ -91,7 +93,6 @@ export default function Hero() {
             Explore Events
           </Link>
         </div>
-        <FlamePanel />
 
       </div>
     </section>

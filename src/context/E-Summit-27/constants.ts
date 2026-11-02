@@ -53,9 +53,28 @@ export const NAV_LINKS: NavLink[] = [
 
 export const CONTACT_EMAIL = "ecell@iitrpr.ac.in";
 
-export type Coordinator = { name: string; phoneDisplay: string; phoneTel: string };
+export type Coordinator = {
+  name: string;
+  phoneDisplay: string;
+  phoneTel: string;
+  image: string;
+  linkedin: string;
+  email: string;
+};
 
+// 2027 coordinator contacts; profiles from the existing E-Cell team directory.
+// Team badges, homepage contacts and sponsorship contacts use this same roster.
 export const COORDINATORS: Coordinator[] = [
-  { name: "Chaitanya Kalme", phoneDisplay: "9098862300", phoneTel: "+919098862300" },
-  { name: "Akash Muhal", phoneDisplay: "70231 01516", phoneTel: "+917023101516" },
+  {
+    name: "Chaitanya Kalme", phoneDisplay: "9098862300", phoneTel: "+919098862300",
+    image: "https://res.cloudinary.com/doxe1rjaj/image/upload/v1762323022/Chaitanya_-_Chaitanya_Kalme_abw78x.jpg",
+    linkedin: "https://www.linkedin.com/in/chaitanya-kalme-1a610a346",
+    email: "2023csb1112@iitrpr.ac.in",
+  },
+  {
+    name: "Akash Muhal", phoneDisplay: "70231 01516", phoneTel: "+917023101516",
+    image: "https://res.cloudinary.com/doxe1rjaj/image/upload/v1762323041/IMG-20250925-WA0026_-_Akash_Muhal_auu5pf.jpg",
+    linkedin: "https://www.linkedin.com/in/akash-muhal-6aa074329?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+    email: "2024mcb1286@iitrpr.ac.in",
+  },
 ];

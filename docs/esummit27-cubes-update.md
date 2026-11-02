@@ -41,3 +41,9 @@ Source: https://github.com/DavidHDev/react-bits/tree/main/src/ts-default/Compone
 - Tile motion translates one pre-tiled CSS layer and uses the existing hero visibility observer to pause when hidden/offscreen. Reduced motion keeps a static floor.
 - Replaced Lora/Poppins with Fontsource Space Grotesk variable headings and Manrope variable body/menu text. Added Noto Sans Devanagari 500 for the Hindi institute name. Fontsource packages pinned at 5.3.0; WOFF2 subsets and original SIL OFL licenses are committed.
 - Fonts load locally using next/font with swap; English subsets total about 47 KB. No runtime font CDN request or extra renderer is needed.
+
+## Corner flames and 2027 coordinators
+
+- Moved moving fire from the center to the bottom-left and bottom-right of the homepage hero. The E-shaped brand logo stays above the title. Reserved space beneath actions keeps both flames clear of mobile buttons.
+- Both fire scenes keep the compact 30 fps tier, adaptive quality, deferred loading and hidden/offscreen/reduced-motion handling. Each drawing buffer is capped at 175,000 pixels, sharing the previous center scene's 350,000-pixel maximum (two renderers still add some fixed overhead).
+- Team lanyards now derive from the existing 2027 contacts: Chaitanya Kalme and Akash Muhal. Photos, LinkedIn URLs and emails come from the repository's E-Cell team directory. Removed Chaitanya's duplicate inherited Publicity Head entry. Homepage and sponsorship contact names remain consistent with the shared roster.

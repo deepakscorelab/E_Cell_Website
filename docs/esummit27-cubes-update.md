@@ -19,3 +19,9 @@ Validation: the isolated preview production build and strict TypeScript checks p
 - Removed E-Cell and TBIF logo images throughout the home page, including its information cards and footer.
 
 Lanyard source: https://github.com/DavidHDev/react-bits/tree/main/src/ts-default/Components/Lanyard
+
+## Liquid glass cards
+
+- Shared content cards (About, events, statistics, speakers, contact and sponsorship) use translucent neutral glass, a bright rim and static reflective highlights in place of the purple/black fill. Cubes remain visible through them.
+- Blur is bounded to 10 px (5 px on mobile); moving marquee and nested cards use the same highlights without repeated backdrop filtering. Unsupported browsers get a readable neutral fallback. No new animation loop or dependency.
+- Coordinator badges increase from size 0.54 to 0.68, with 420–560 px stages and a wider two-column section. Existing drag/flip, render limits and reduced-motion fallbacks remain.

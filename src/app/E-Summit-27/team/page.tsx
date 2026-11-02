@@ -28,7 +28,7 @@ export default function TeamPage() {
         className="e27-section px-4 py-20 sm:px-6 lg:px-8 lg:py-24"
         style={{ containIntrinsicSize: "auto 1000px" }}
       >
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-6xl">
           <Reveal className="text-center">
             <p className="e27-label mb-4">Organising Committee</p>
             <h2 id="e27t-oc-title" className="e27-heading text-4xl sm:text-5xl">

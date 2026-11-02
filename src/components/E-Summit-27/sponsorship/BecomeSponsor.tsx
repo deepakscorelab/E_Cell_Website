@@ -17,12 +17,6 @@ export default function BecomeSponsor() {
     >
       <Reveal>
         <div className="e27-card relative mx-auto max-w-6xl overflow-hidden px-6 py-12 sm:px-10 lg:px-14 lg:py-16">
-          {/* static glow */}
-          <div
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_70%_at_100%_0%,rgba(197,55,248,0.22),transparent_70%)]"
-            aria-hidden="true"
-          />
-
           <div className="relative grid gap-12 lg:grid-cols-[1.1fr_1fr]">
             <div>
               <p className="e27-label mb-4">Become a sponsor</p>
@@ -52,7 +46,7 @@ export default function BecomeSponsor() {
                   {SPONSOR_HEADS.map((m) => (
                     <li
                       key={m.email || m.name}
-                      className="flex items-center justify-between gap-4 rounded-2xl border border-[var(--e27-line)] bg-[#050008]/60 px-4 py-3"
+                      className="flex items-center justify-between gap-4 e27-glass e27-glass-inset rounded-2xl px-4 py-3"
                     >
                       <div className="min-w-0">
                         <p className="truncate font-semibold text-white">{m.name}</p>
@@ -95,7 +89,7 @@ export default function BecomeSponsor() {
                       <a
                         href={`tel:${c.phoneTel}`}
                         aria-label={`Call ${c.name}, ${c.phoneDisplay}`}
-                        className="flex items-center gap-3 rounded-2xl border border-[var(--e27-line)] bg-[#050008]/60 px-4 py-3 transition-transform hover:-translate-y-0.5"
+                        className="flex items-center gap-3 e27-glass e27-glass-inset rounded-2xl px-4 py-3 transition-transform hover:-translate-y-0.5"
                       >
                         <Phone size={16} className="shrink-0 text-[var(--e27-bright)]" aria-hidden="true" />
                         <span className="min-w-0">

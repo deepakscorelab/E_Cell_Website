@@ -11,7 +11,7 @@ function TierCard({ tier }: { tier: SponsorTier }) {
   const featured = !!tier.featured;
   return (
     <article
-      className={`relative flex h-full flex-col p-7 sm:p-8 ${featured ? "e27s-featured" : "e27-card e27-tilt-card"}`}
+      className={`relative flex h-full flex-col p-7 sm:p-8 ${featured ? "e27-card e27s-featured" : "e27-card e27-tilt-card"}`}
     >
       {featured && <span className="e27s-ribbon">Most visibility</span>}
 

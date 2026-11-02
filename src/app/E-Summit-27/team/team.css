@@ -45,22 +45,21 @@
   50% { transform: translate3d(-50%, -46%, 0); }
 }
 
-/* ---------- OC featured card: static glowing gradient ring ---------- */
+/* ---------- Enlarged coordinator lanyards ---------- */
 .e27-lanyard-card {
-  border: 1px solid var(--e27-line);
   border-radius: 1.6rem;
-  background: rgba(5, 0, 8, 0.55);
   overflow: hidden;
 }
 .e27-lanyard-stage {
   position: relative;
-  height: clamp(380px, 52vw, 500px);
+  height: clamp(420px, 52vw, 560px);
 }
 .e27-lanyard-fallback {
   position: absolute;
-  width: 55%;
-  left: 22.5%;
-  top: 25%;
+  width: min(68%, 290px);
+  left: 50%;
+  transform: translateX(-50%);
+  top: 22%;
   border-radius: 1rem;
   overflow: hidden;
 }

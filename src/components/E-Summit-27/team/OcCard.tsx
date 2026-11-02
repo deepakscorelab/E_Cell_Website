@@ -32,7 +32,7 @@ export default function OcCard({ member }: { member: Member }) {
     }, "100px");
   }, []);
   return (
-    <article ref={host} className="e27-lanyard-card">
+    <article ref={host} className="e27-lanyard-card e27-glass">
       <div className="e27-lanyard-stage" data-ready={ready}>
         {!ready && <div className="e27-lanyard-fallback">
           <TeamPhoto src={member.image} name={member.name} width={600} />
@@ -40,7 +40,7 @@ export default function OcCard({ member }: { member: Member }) {
         {mounted && !failed && <Lanyard frontImage={cldThumb(member.image, 600)}
           backImage={asset("esummit27-wordmark.webp")} imageFit="cover" cardColor="#170728"
           strapColor="#6211bf" strapImage={asset("esummit27-wordmark.webp")}
-          metal="silver" finish="matte" size={0.54} strapLength={0.35}
+          metal="silver" finish="matte" size={0.68} strapLength={0.35}
           breeze={0} damping={0.65} accessibleName={`${member.name} coordinator badge`}
           onReady={onReady} onError={onError} />}
       </div>

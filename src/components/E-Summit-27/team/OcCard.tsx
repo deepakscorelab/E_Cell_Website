@@ -73,14 +73,13 @@ export default function OcCard({ member }: { member: Member }) {
                   <Mail size={18} aria-hidden="true" />
                 </a>
               )}
-              {member.phoneTel && member.phoneDisplay && (
+              {member.phoneTel && (
                 <a
                   href={`tel:${member.phoneTel}`}
-                  className="e27t-icon-btn e27t-call-btn"
-                  aria-label={`Call ${member.name} at ${member.phoneDisplay}`}
+                  className="e27t-icon-btn !h-11 !w-11"
+                  aria-label={`Call ${member.name}`}
                 >
                   <Phone size={18} aria-hidden="true" />
-                  <span>{member.phoneDisplay}</span>
                 </a>
               )}
             </div>

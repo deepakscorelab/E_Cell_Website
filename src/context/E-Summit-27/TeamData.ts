@@ -8,6 +8,8 @@ export type Member = {
   image: string; // full https Cloudinary URL
   linkedin: string;
   email: string;
+  phoneDisplay?: string;
+  phoneTel?: string;
 };
 
 /**
@@ -19,11 +21,13 @@ export function cldThumb(url: string, w = 400): string {
   return url.replace("/image/upload/", `/image/upload/w_${w},q_90,f_auto,c_fill,g_face,ar_4:5/`);
 }
 
-export const coreTeamMembers: Member[] = COORDINATORS.map(({ name, image, linkedin, email }) => ({
+export const coreTeamMembers: Member[] = COORDINATORS.map(({ name, image, linkedin, email, phoneDisplay, phoneTel }) => ({
   name,
   image,
   linkedin,
   email,
+  phoneDisplay,
+  phoneTel,
   position: "Overall Coordinator",
 }));
 

@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { observeMotionActivity } from "../motionActivity";
 import { cldThumb } from "@/context/E-Summit-27/TeamData";
 import { asset } from "@/context/E-Summit-27/constants";
-import { Mail } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 import { FaLinkedinIn } from "react-icons/fa";
 import TeamPhoto from "./TeamPhoto";
 import type { Member } from "@/context/E-Summit-27/TeamData";
@@ -52,7 +52,7 @@ export default function OcCard({ member }: { member: Member }) {
             <h3 className="mt-3 font-[family-name:var(--e27-font-heading)] text-3xl text-white sm:text-4xl">
               {member.name}
             </h3>
-            <div className="mt-5 flex justify-center gap-3">
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-3" role="group" aria-label={`Contact ${member.name}`}>
               {member.linkedin && (
                 <a
                   href={member.linkedin}
@@ -71,6 +71,16 @@ export default function OcCard({ member }: { member: Member }) {
                   aria-label={`Email ${member.name}`}
                 >
                   <Mail size={18} aria-hidden="true" />
+                </a>
+              )}
+              {member.phoneTel && member.phoneDisplay && (
+                <a
+                  href={`tel:${member.phoneTel}`}
+                  className="e27t-icon-btn e27t-call-btn"
+                  aria-label={`Call ${member.name} at ${member.phoneDisplay}`}
+                >
+                  <Phone size={18} aria-hidden="true" />
+                  <span>{member.phoneDisplay}</span>
                 </a>
               )}
             </div>

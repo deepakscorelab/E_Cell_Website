@@ -337,9 +337,10 @@
 .e27-fire-panel--left { left: -2vw; }
 .e27-fire-panel--right { right: -2vw; transform: translateY(-50%) scaleX(-1); }
 @media (max-width: 640px) {
-  .e27-fire-panel { width: 56vw; height: 180px; }
-  .e27-fire-panel--left { left: -6vw; }
-  .e27-fire-panel--right { right: -6vw; }
+  /* Keep the bright flame cores at the edges, clear of the mobile wordmark. */
+  .e27-fire-panel { width: 42vw; height: 180px; opacity: 0.75; }
+  .e27-fire-panel--left { left: -18vw; }
+  .e27-fire-panel--right { right: -18vw; }
 }
 .e27-fire-poster {
   position: absolute;

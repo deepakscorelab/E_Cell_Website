@@ -25,6 +25,11 @@ export default function Hero() {
 
   return (
     <section ref={heroRef} className="e27-hero" aria-labelledby="e27-hero-title">
+      {/* Original moving tile floor, layered over the shared cube background. */}
+      <div className="e27-floor-wrap" aria-hidden="true">
+        <div className="e27-floor"><div className="e27-floor-track" /></div>
+      </div>
+      <div className="e27-horizon" aria-hidden="true" />
       {/* ---------- content ---------- */}
       <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-5xl flex-col items-center justify-center px-4 pb-8 pt-32 text-center">
 
@@ -64,7 +69,7 @@ export default function Hero() {
 
         <p className="e27-rise e27-delay-2 mt-6 text-[11px] font-medium tracking-[0.22em] text-white/70 sm:text-xs">
           {INSTITUTE_EN}
-          <span className="mt-1 block tracking-[0.1em]">{INSTITUTE_HI}</span>
+          <span lang="hi" className="e27-devanagari mt-1 block">{INSTITUTE_HI}</span>
         </p>
 
         <div className="e27-rise e27-delay-3 mt-7 flex flex-wrap items-center justify-center gap-3 text-sm text-white/85">

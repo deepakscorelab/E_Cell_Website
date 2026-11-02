@@ -35,9 +35,9 @@
 }
 
 .e27-heading {
-  font-family: var(--e27-font-heading), Georgia, serif;
-  font-weight: 400;
-  letter-spacing: 0.08em;
+  font-family: var(--e27-font-heading), system-ui, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.025em;
   text-transform: uppercase;
   color: var(--e27-lavender);
   line-height: 1.05;
@@ -305,6 +305,7 @@
    Reduced motion: stop everything decorative
    ===================================================================== */
 @media (prefers-reduced-motion: reduce) {
+  .e27-floor-track,
   .e27-flame-float,
   .e27-ignite,
   .e27-rise,
@@ -315,12 +316,12 @@
     overflow-x: auto;
   }
   .e27-tilt-card,
-  .e27-btn,
-  .e27-mobile-panel {
+  .e27-btn {
     transition: none !important;
   }
 }
 /* Decorative loops sleep while off-screen or in a background tab. */
+.e27-hero[data-motion-paused="true"] .e27-floor-track,
 .e27-hero[data-motion-paused="true"] .e27-flame-float,
 .e27t-hero[data-motion-paused="true"] .e27t-hero-flame {
   animation-play-state: paused;
@@ -343,4 +344,58 @@
     transform: none;
     transition: none;
   }
+}
+
+/* Restored original synthwave tile floor. One translating layer; no JS loop. */
+.e27-floor-wrap {
+  --e27-tile: 80px;
+  position: absolute;
+  inset: auto 0 0;
+  height: 40%;
+  perspective: 600px;
+  perspective-origin: 50% 0%;
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent, rgba(5, 0, 8, 0.65));
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 85%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 85%, transparent);
+}
+.e27-floor {
+  position: absolute;
+  left: -60%;
+  width: 220%;
+  top: 0;
+  height: 260%;
+  transform-origin: 50% 0%;
+  transform: rotateX(65deg);
+  overflow: hidden;
+}
+.e27-floor-track {
+  position: absolute;
+  inset: calc(var(--e27-tile) * -1) 0 0;
+  background-image:
+    linear-gradient(to right, rgba(197, 55, 248, 0.65) 1.5px, transparent 1.5px),
+    linear-gradient(to bottom, rgba(197, 55, 248, 0.65) 1.5px, transparent 1.5px);
+  background-size: var(--e27-tile) var(--e27-tile);
+  animation: e27-floor-move 1.6s linear infinite;
+}
+@keyframes e27-floor-move {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(0, var(--e27-tile), 0); }
+}
+.e27-horizon {
+  position: absolute;
+  inset: auto 0 40%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--e27-magenta), transparent);
+  opacity: 0.4;
+  pointer-events: none;
+}
+.e27-devanagari {
+  font-family: var(--e27-font-hindi), sans-serif;
+  letter-spacing: 0.025em;
+  line-height: 1.7;
+}
+@media (max-width: 767px) {
+  .e27-floor-wrap { --e27-tile: 64px; }
 }

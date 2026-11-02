@@ -34,3 +34,10 @@ Lanyard source: https://github.com/DavidHDev/react-bits/tree/main/src/ts-default
 - Preview uses GSAP 3.14.2, already required by the canonical app.
 
 Source: https://github.com/DavidHDev/react-bits/tree/main/src/ts-default/Components/StaggeredMenu
+
+## Restored homepage tiles and Fontsource typography
+
+- Restored the original purple perspective tile floor beneath the homepage content, alongside the persistent cubes. The E-shaped logo and moving flame keep their existing positions.
+- Tile motion translates one pre-tiled CSS layer and uses the existing hero visibility observer to pause when hidden/offscreen. Reduced motion keeps a static floor.
+- Replaced Lora/Poppins with Fontsource Space Grotesk variable headings and Manrope variable body/menu text. Added Noto Sans Devanagari 500 for the Hindi institute name. Fontsource packages pinned at 5.3.0; WOFF2 subsets and original SIL OFL licenses are committed.
+- Fonts load locally using next/font with swap; English subsets total about 47 KB. No runtime font CDN request or extra renderer is needed.

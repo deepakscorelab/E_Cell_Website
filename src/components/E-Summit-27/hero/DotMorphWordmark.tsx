@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { RotateCcw } from "lucide-react";
 import { FrameClock } from "./firePerformance";
 
 type Props = { src: string; alt: string };
@@ -13,13 +12,10 @@ export default function DotMorphWordmark({ src, alt }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const replayRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     const host = hostRef.current, image = imageRef.current, canvas = canvasRef.current;
-    const button = buttonRef.current;
-    if (!host || !image || !canvas || !button) return;
+    if (!host || !image || !canvas) return;
     const context = canvas.getContext("2d", { alpha: true });
     if (!context) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -106,20 +102,17 @@ export default function DotMorphWordmark({ src, alt }: Props) {
         raf = requestAnimationFrame(frame);
       } catch {
         failed = true;
-        button.hidden = true;
         reveal("static");
       }
     };
 
     const queue = () => {
-      button.hidden = failed || reduce.matches || !image.complete || !image.naturalWidth;
-      if (!visible || document.hidden || button.hidden || attempted || disposed) return;
+      if (!visible || document.hidden || failed || reduce.matches || !image.complete || !image.naturalWidth || attempted || disposed) return;
       attempted = true;
       timer = window.setTimeout(start, 300);
     };
     const onVisibility = () => { if (document.hidden || reduce.matches) reveal(); else queue(); };
-    const onPreference = () => { button.hidden = reduce.matches || failed; onVisibility(); };
-    const onError = () => { failed = true; button.hidden = true; reveal("static"); };
+    const onError = () => { failed = true; reveal("static"); };
     const intersection = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
       if (!visible) reveal(); else queue();
@@ -128,44 +121,29 @@ export default function DotMorphWordmark({ src, alt }: Props) {
       const width = host.clientWidth, height = host.clientHeight;
       if (width === lastWidth && height === lastHeight) return;
       lastWidth = width; lastHeight = height;
-      reveal(); // A later explicit replay resamples at the new size.
+      reveal(); // Keep the original artwork crisp after a viewport resize.
     });
-    replayRef.current = () => {
-      // The replay control can remain visible after the wordmark has scrolled away.
-      host.closest(".e27-hero")?.scrollIntoView({ block: "start", behavior: "instant" });
-      const rect = host.getBoundingClientRect();
-      visible = rect.bottom > 0 && rect.top < window.innerHeight;
-      start();
-    };
     image.addEventListener("load", queue);
     image.addEventListener("error", onError);
     document.addEventListener("visibilitychange", onVisibility);
-    reduce.addEventListener("change", onPreference);
+    reduce.addEventListener("change", onVisibility);
     intersection.observe(host);
     resize.observe(host);
     queue();
     return () => {
       disposed = true;
       reveal("static");
-      replayRef.current = null;
-      button.hidden = true;
       intersection.disconnect(); resize.disconnect();
       image.removeEventListener("load", queue);
       image.removeEventListener("error", onError);
       document.removeEventListener("visibilitychange", onVisibility);
-      reduce.removeEventListener("change", onPreference);
+      reduce.removeEventListener("change", onVisibility);
     };
   }, [src]);
 
-  return <>
-    <div ref={hostRef} className="e27-dot-wordmark" data-phase="static">
+  return <div ref={hostRef} className="e27-dot-wordmark" data-phase="static">
       <img ref={imageRef} src={src} alt={alt} width={1218} height={219}
         fetchPriority="high" decoding="async" />
       <canvas ref={canvasRef} aria-hidden="true" style={{ opacity: 0 }} />
-    </div>
-    <button ref={buttonRef} type="button" className="e27-dot-replay" hidden
-      aria-label="Replay dots-to-text intro" onClick={() => replayRef.current?.()}>
-      <RotateCcw size={14} aria-hidden="true" /> Replay intro
-    </button>
-  </>;
+    </div>;
 }

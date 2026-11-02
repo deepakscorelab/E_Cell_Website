@@ -356,30 +356,8 @@
   height: 100%;
   pointer-events: none;
 }
-.e27-dot-replay {
-  position: absolute;
-  bottom: 16px;
-  left: 50%;
-  z-index: 20;
-  transform: translateX(-50%);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 8px 16px;
-  border: 1px solid rgba(230, 215, 250, 0.28);
-  border-radius: 999px;
-  color: var(--e27-lavender);
-  background: rgba(15, 6, 28, 0.45);
-  font-size: 12px;
-  cursor: pointer;
-  transition: border-color 200ms ease, background-color 200ms ease;
-}
-.e27-dot-replay:hover { border-color: rgba(240, 228, 255, 0.65); background: rgba(45, 25, 70, 0.55); }
-.e27-dot-replay[hidden] { display: none; }
 @media (prefers-reduced-motion: reduce) {
-  .e27-dot-wordmark canvas, .e27-dot-replay { display: none; }
+  .e27-dot-wordmark canvas { display: none; }
   .e27-dot-wordmark img { opacity: 1 !important; }
 }
 

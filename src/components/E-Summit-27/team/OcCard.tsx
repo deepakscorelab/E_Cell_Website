@@ -35,9 +35,9 @@ export default function OcCard({ member }: { member: Member }) {
     <article ref={host} className="e27-lanyard-card e27-glass">
       <div className="e27-lanyard-stage" data-ready={ready}>
         {!ready && <div className="e27-lanyard-fallback">
-          <TeamPhoto src={member.image} name={member.name} width={600} />
+          <TeamPhoto src={member.image} name={member.name} width={960} />
         </div>}
-        {mounted && !failed && <Lanyard frontImage={cldThumb(member.image, 600)}
+        {mounted && !failed && <Lanyard frontImage={cldThumb(member.image, 960)}
           backImage={asset("esummit27-wordmark.webp")} imageFit="cover" cardColor="#170728"
           strapColor="#6211bf" strapImage={asset("esummit27-wordmark.webp")}
           metal="silver" finish="matte" size={0.68} strapLength={0.35}

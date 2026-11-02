@@ -6,7 +6,7 @@ import { cldThumb } from "@/context/E-Summit-27/TeamData";
 type TeamPhotoProps = {
   src: string;
   name: string;
-  /** Cloudinary thumbnail width (400 for grid cards, 600 for OC cards). */
+  /** Cloudinary thumbnail width (400 for grid cards, 960 for OC cards). */
   width?: number;
   eager?: boolean;
   imgClassName?: string;
@@ -47,6 +47,7 @@ export default function TeamPhoto({ src, name, width = 400, eager = false, imgCl
         <img
           ref={imgRef}
           src={cldThumb(src, width)}
+          srcSet={width < 960 ? `${cldThumb(src, width)} 1x, ${cldThumb(src, Math.min(width * 2, 960))} 2x` : undefined}
           alt={name}
           width={width}
           height={Math.round(width * 1.25)}

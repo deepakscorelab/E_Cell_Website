@@ -12,11 +12,11 @@ export type Member = {
 
 /**
  * Cloudinary thumbnail helper: asks Cloudinary for a small, face-centred 4:5 image
- * (auto format/quality). Non-Cloudinary URLs are returned unchanged.
+ * (automatic format and high quality). Non-Cloudinary URLs are returned unchanged.
  */
 export function cldThumb(url: string, w = 400): string {
   if (!url || !url.includes("/image/upload/")) return url;
-  return url.replace("/image/upload/", `/image/upload/w_${w},q_auto,f_auto,c_fill,g_face,ar_4:5/`);
+  return url.replace("/image/upload/", `/image/upload/w_${w},q_90,f_auto,c_fill,g_face,ar_4:5/`);
 }
 
 export const coreTeamMembers: Member[] = COORDINATORS.map(({ name, image, linkedin, email }) => ({

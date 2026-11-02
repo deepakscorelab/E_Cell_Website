@@ -47,3 +47,10 @@ Source: https://github.com/DavidHDev/react-bits/tree/main/src/ts-default/Compone
 - Moved moving fire from the center to the bottom-left and bottom-right of the homepage hero. The E-shaped brand logo stays above the title. Reserved space beneath actions keeps both flames clear of mobile buttons.
 - Both fire scenes keep the compact 30 fps tier, adaptive quality, deferred loading and hidden/offscreen/reduced-motion handling. Each drawing buffer is capped at 175,000 pixels, sharing the previous center scene's 350,000-pixel maximum (two renderers still add some fixed overhead).
 - Team lanyards now derive from the existing 2027 contacts: Chaitanya Kalme and Akash Muhal. Photos, LinkedIn URLs and emails come from the repository's E-Cell team directory. Removed Chaitanya's duplicate inherited Publicity Head entry. Homepage and sponsorship contact names remain consistent with the shared roster.
+
+## Image clarity
+- Coordinator textures request 960 px, quality-90 images instead of 600 px automatic-quality thumbnails. Grid portraits have a 2x source for high-density screens; all photos remain lazy loaded.
+- Portrait faces use a colour-preserving unlit material without simulated grain, glare or tone mapping. Card edges, backs, clips and straps retain their 3D lighting.
+- Lanyards keep the existing 30 fps / 600k desktop / 350k mobile motion budgets. On settling, one frame uses up to 2x DPR (1.4M desktop / 700k mobile pixels), then rendering sleeps. Dragging resumes the motion budget.
+- Logo glow is a separate radial background. Entrance transforms finish at `none`, avoiding a retained scaled compositing layer. Existing logo artwork is unchanged: the available wordmark is 1218×219 and the flame is 347×551, so sharper master artwork would still improve fine detail.
+- Validation: preview production build and eight animation/lifecycle tests pass.

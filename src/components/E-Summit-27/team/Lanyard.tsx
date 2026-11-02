@@ -605,6 +605,8 @@ const paintFace = (canvas: HTMLCanvasElement, image: HTMLImageElement | null, co
   if (!ctx) return;
   ctx.fillStyle = toCss(color);
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
   if (image) drawFitted(ctx, image, canvas.width, canvas.height, fit);
 };
 
@@ -1000,17 +1002,17 @@ const Lanyard = ({
         .replace('#include <opaque_fragment>', `${FOIL_FRAGMENT_BODY}\n#include <opaque_fragment>`);
     };
 
-    const frontMaterial = new THREE.MeshPhysicalMaterial({
+    // Portrait pixels keep their original colour and detail; lighting still
+    // models the card edges, reverse, metal clip and woven strap.
+    const frontMaterial = new THREE.MeshBasicMaterial({
       map: frontTexture,
-      normalMap: grain,
-      normalScale: new THREE.Vector2(0.06, 0.06)
+      toneMapped: false
     });
     const backMaterial = new THREE.MeshPhysicalMaterial({
       map: backTexture,
       normalMap: grain,
       normalScale: new THREE.Vector2(0.06, 0.06)
     });
-    frontMaterial.onBeforeCompile = injectFoil;
     backMaterial.onBeforeCompile = injectFoil;
     const edgeMaterial = new THREE.MeshPhysicalMaterial();
     const metalMaterial = new THREE.MeshStandardMaterial({ metalness: 1 });
@@ -1174,7 +1176,7 @@ const Lanyard = ({
 
       const finish = FINISHES[s.finish] || FINISHES.glossy;
       const card = parseColor(s.cardColor, [1, 1, 1]);
-      [frontMaterial, backMaterial].forEach(material => {
+      [backMaterial].forEach(material => {
         material.roughness = finish.roughness;
         material.metalness = finish.metalness;
         material.clearcoat = finish.clearcoat;
@@ -1281,6 +1283,17 @@ const Lanyard = ({
       clampGroup.position.copy(hang);
     };
 
+    // Use the existing motion budget while swinging; render one crisp Retina
+    // frame on settling, then sleep. Background effects keep their own budgets.
+    const setResolution = (sharp: boolean) => {
+      const mobile = window.matchMedia('(max-width: 767px)').matches;
+      const budget = sharp ? (mobile ? 700_000 : 1_400_000) : (mobile ? 350_000 : 600_000);
+      const ratio = Math.min(window.devicePixelRatio || 1, sharp ? 2 : 1.5,
+        Math.sqrt(budget / (view.width * view.height)),
+        renderer.capabilities.maxTextureSize / Math.max(view.width, view.height));
+      if (Math.abs(renderer.getPixelRatio() - ratio) > 0.001) renderer.setPixelRatio(ratio);
+    };
+
     const render = () => {
       cardGroup.position.copy(sim.body.position);
       cardGroup.quaternion.copy(sim.body.quaternion);
@@ -1333,13 +1346,15 @@ const Lanyard = ({
         sim.grab = null;
         placeHanging(sim, layout, false);
       }
-      render();
       const resting = sim.calm > 1.2 && !sim.grab && current.breeze === 0;
+      if (resting) setResolution(true);
+      render();
       if (visible && !resting) raf = requestAnimationFrame(tick);
     };
 
     const start = () => {
       if (raf || !visible || !alive || document.hidden) return;
+      setResolution(false);
       sim.calm = 0;
       frameClock.reset();
       raf = requestAnimationFrame(tick);
@@ -1452,9 +1467,7 @@ const Lanyard = ({
     const resize = () => {
       view.width = Math.max(1, container.clientWidth);
       view.height = Math.max(1, container.clientHeight);
-      const budget = window.matchMedia('(max-width: 767px)').matches ? 350_000 : 600_000;
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5,
-        Math.sqrt(budget / (view.width * view.height))));
+      setResolution(false);
       renderer.setSize(view.width, view.height, false);
       apply();
       render();

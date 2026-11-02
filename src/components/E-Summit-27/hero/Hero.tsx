@@ -29,6 +29,17 @@ export default function Hero() {
         <div className="e27-floor"><div className="e27-floor-track" /></div>
       </div>
       <div className="e27-horizon" aria-hidden="true" />
+      {/* Bottom-aligned campus artwork sits above both background effects. */}
+      <div className="e27-hero-artwork" aria-hidden="true">
+        <img
+          src={asset("hero-campus-background.webp")}
+          alt=""
+          width={1920}
+          height={1080}
+          decoding="async"
+          fetchPriority="high"
+        />
+      </div>
       <FlamePanel side="left" />
       <FlamePanel side="right" />
       {/* ---------- content ---------- */}

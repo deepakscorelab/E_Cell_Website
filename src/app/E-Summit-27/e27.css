@@ -303,11 +303,31 @@
 }
 .e27-hero-flame { pointer-events: none; }
 
-/* Moving flames in both hero corners; the E-shaped brand mark stays above the title. */
+/* Preserve the supplied artwork's proportions and bottom edge at every viewport. */
+.e27-hero-artwork {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: #000;
+  pointer-events: none;
+}
+.e27-hero-artwork img {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: auto;
+}
+.e27-hero :is(.e27-floor-wrap, .e27-horizon) { z-index: 1; }
+
+/* Moving flames at the sides' center; the E-shaped brand mark stays above the title. */
 .e27-fire-panel {
   position: absolute;
-  bottom: clamp(22px, 4svh, 40px);
-  z-index: 1;
+  top: 50%;
+  z-index: 3;
+  transform: translateY(-50%);
   width: min(42vw, 580px);
   height: clamp(180px, 25svh, 240px);
   overflow: hidden;
@@ -315,7 +335,7 @@
   mask-image: radial-gradient(ellipse at 50% 48%, #000 20%, transparent 75%);
 }
 .e27-fire-panel--left { left: -2vw; }
-.e27-fire-panel--right { right: -2vw; transform: scaleX(-1); }
+.e27-fire-panel--right { right: -2vw; transform: translateY(-50%) scaleX(-1); }
 @media (max-width: 640px) {
   .e27-fire-panel { width: 56vw; height: 180px; }
   .e27-fire-panel--left { left: -6vw; }

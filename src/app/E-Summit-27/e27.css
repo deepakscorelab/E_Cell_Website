@@ -304,6 +304,25 @@
   height: auto;
 }
 .e27-site-background :is(.e27-floor-wrap, .e27-horizon) { z-index: 1; }
+.e27-ambient-layer { position: absolute; inset: 0; z-index: 0; transition: opacity 650ms ease; }
+
+/* Entrance: falling artwork -> finite particle morph -> ambient background.
+   Only the artwork wrapper moves; fixed backdrop and final image anchors stay put. */
+.e27-hero-morph { position: relative; z-index: 10; }
+.e27-hero-morph-canvas { position: absolute; inset: 0; z-index: 20; width: 100%; height: 100%; pointer-events: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .e27-root:is([data-intro="prepare"], [data-intro="pillars"], [data-intro="morph"]) .e27-hero-morph-content { opacity: 0; }
+  .e27-root[data-intro="prepare"] .e27-site-artwork { opacity: 0; transform: translate3d(0, -105vh, 0); }
+  .e27-root:is([data-intro="prepare"], [data-intro="pillars"], [data-intro="morph"]) :is(.e27-ambient-layer, .e27-fire-panel) { opacity: 0; }
+  .e27-root:is([data-intro="prepare"], [data-intro="pillars"], [data-intro="morph"]) .e27-floor-track { animation-play-state: paused; }
+  .e27-root:is([data-intro="prepare"], [data-intro="pillars"], [data-intro="morph"]) .e27-flame-float { animation: none; transform: none; }
+  .e27-root:is([data-intro="prepare"], [data-intro="pillars"], [data-intro="morph"]) .e27-flame-glow::before { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .e27-hero-morph-canvas { display: none; }
+  .e27-hero-morph-content { opacity: 1 !important; }
+  .e27-ambient-layer { transition: none; }
+}
 
 /* Moving flames at the sides' center; the E-shaped brand mark stays above the title. */
 .e27-fire-panel {
@@ -315,6 +334,7 @@
   height: clamp(180px, 25svh, 240px);
   overflow: hidden;
   pointer-events: none;
+  transition: opacity 650ms ease;
   mask-image: radial-gradient(ellipse at 50% 48%, #000 20%, transparent 75%);
 }
 .e27-fire-panel--left { left: -2vw; }
@@ -339,27 +359,16 @@
 .e27-fire-scene[data-ready="true"] { opacity: 1; }
 .e27-fire-scene canvas { display: block; width: 100% !important; height: 100% !important; }
 @media (prefers-reduced-motion: reduce) {
-  .e27-fire-scene { transition: none; }
+  .e27-fire-scene, .e27-fire-panel { transition: none; }
 }
 
-/* One-shot dots-to-wordmark experiment; no overlay blocks the page controls. */
+/* Keep the final wordmark's established dimensions. */
 .e27-dot-wordmark {
   position: relative;
   width: min(88vw, 620px);
   aspect-ratio: 1218 / 219;
 }
 .e27-dot-wordmark img { display: block; width: 100%; height: auto; }
-.e27-dot-wordmark canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-@media (prefers-reduced-motion: reduce) {
-  .e27-dot-wordmark canvas { display: none; }
-  .e27-dot-wordmark img { opacity: 1 !important; }
-}
 
 /* Glow is a separate background, so the logo is never rasterized through a filter. */
 .e27-flame-glow {

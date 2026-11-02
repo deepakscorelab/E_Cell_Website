@@ -18,11 +18,13 @@ export default function SiteBackground() {
 
   return (
     <div ref={host} className="e27-site-background" aria-hidden="true">
-      <SiteCubes />
-      <div className="e27-floor-wrap">
-        <div className="e27-floor"><div className="e27-floor-track" /></div>
+      <div className="e27-ambient-layer">
+        <SiteCubes />
+        <div className="e27-floor-wrap">
+          <div className="e27-floor"><div className="e27-floor-track" /></div>
+        </div>
+        <div className="e27-horizon" />
       </div>
-      <div className="e27-horizon" />
       <div className="e27-site-artwork">
         <img
           src={asset("campus-transparent-v2.webp")}

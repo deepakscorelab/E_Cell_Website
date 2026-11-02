@@ -3,9 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import FireCanvasLoader from "./FireCanvasLoader";
 import { observeMotionActivity } from "../motionActivity";
+import { useSiteIntro } from "../SiteIntro";
 
 /** The original moving fire, separate from the E-shaped brand logo above. */
 export default function FlamePanel({ side }: { side: "left" | "right" }) {
+  const { ambientEnabled, ambientDelay } = useSiteIntro();
   const host = useRef<HTMLDivElement>(null);
   const pointer = useRef({ x: 0, y: 0 });
   const [mounted, setMounted] = useState(false);
@@ -20,8 +22,8 @@ export default function FlamePanel({ side }: { side: "left" | "right" }) {
 
   useEffect(() => {
     const element = host.current;
-    if (!element) return;
-    const deadline = performance.now() + 2000;
+    if (!element || !ambientEnabled) return;
+    const deadline = performance.now() + ambientDelay + 100;
     let timer = 0;
     let idle = 0;
     const cancel = () => {
@@ -38,12 +40,12 @@ export default function FlamePanel({ side }: { side: "left" | "right" }) {
       if (!active || failed.current) return;
       timer = window.setTimeout(() => {
         const mount = () => setMounted(true);
-        if (window.requestIdleCallback) idle = window.requestIdleCallback(mount, { timeout: 1000 });
+        if (window.requestIdleCallback) idle = window.requestIdleCallback(mount, { timeout: 400 });
         else mount();
       }, Math.max(0, deadline - performance.now()));
     });
     return () => { cancel(); stop(); };
-  }, []);
+  }, [ambientEnabled, ambientDelay]);
 
   return (
     <div ref={host} className={`e27-fire-panel e27-fire-panel--${side}`} aria-hidden="true">

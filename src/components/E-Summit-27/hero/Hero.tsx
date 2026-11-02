@@ -5,7 +5,8 @@ import Link from "next/link";
 import { CalendarDays, MapPin, ArrowRight } from "lucide-react";
 import { observeMotionActivity } from "../motionActivity";
 import FlamePanel from "./FlamePanel";
-import DotMorphWordmark from "./DotMorphWordmark";
+import HeroMorph from "./HeroMorph";
+import { useSiteIntro } from "../SiteIntro";
 import {
   BASE,
   EVENT_DATES,
@@ -15,6 +16,7 @@ import {
 } from "@/context/E-Summit-27/constants";
 
 export default function Hero() {
+  const { phase, completeMorph } = useSiteIntro();
   const heroRef = useRef<HTMLElement>(null);
   useEffect(() => {
     const hero = heroRef.current;
@@ -27,12 +29,14 @@ export default function Hero() {
       <FlamePanel side="left" />
       <FlamePanel side="right" />
       {/* ---------- content ---------- */}
+      <HeroMorph active={phase === "morph"} onComplete={completeMorph}>
       <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-5xl flex-col items-center justify-center px-4 pb-44 pt-32 text-center sm:pb-40 lg:pb-36">
 
         <div className="e27-hero-flame mb-6" aria-hidden="true">
-          <div className="e27-ignite">
+          <div>
             <div className="e27-flame-glow">
               <img
+                data-morph-image
                 src={asset("flame-logo.webp")}
                 alt=""
                 width={347}
@@ -48,35 +52,35 @@ export default function Hero() {
           E-Summit&apos;27 — Igniting the Unwritten
         </h1>
 
-        {/* Dots form the original wordmark, then the sharp source artwork takes over. */}
-        <div className="mt-2">
-          <DotMorphWordmark
-            src={asset("esummit27-wordmark.webp")}
-            alt="E-Summit 27 — Igniting the Unwritten"
-          />
+        {/* Original artwork remains the final sharp, accessible content. */}
+        <div className="mt-2 e27-dot-wordmark">
+          <img data-morph-image src={asset("esummit27-wordmark.webp")}
+            alt="E-Summit 27 — Igniting the Unwritten" width={1218} height={219}
+            fetchPriority="high" decoding="async" />
         </div>
 
-        <div className="e27-rise e27-delay-3 mt-7 e27-hero-meta">
+        <div className="mt-7 e27-hero-meta">
           <span>
             <CalendarDays size={16} className="text-[var(--e27-magenta)]" aria-hidden="true" />
-            {EVENT_DATES}
+            <span data-morph-text>{EVENT_DATES}</span>
           </span>
           <span>
             <MapPin size={16} className="text-[var(--e27-magenta)]" aria-hidden="true" />
-            {VENUE}
+            <span data-morph-text>{VENUE}</span>
           </span>
         </div>
 
-        <div className="e27-rise e27-delay-4 mt-7 flex flex-wrap items-center justify-center gap-3">
-          <Link href={REGISTER_URL} className="e27-btn e27-btn-primary">
-            Register Now <ArrowRight size={16} aria-hidden="true" />
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+          <Link data-morph-control href={REGISTER_URL} className="e27-btn e27-btn-primary">
+            <span data-morph-text>Register Now</span> <ArrowRight size={16} aria-hidden="true" />
           </Link>
-          <a href={`${BASE}#events`} className="e27-btn e27-btn-ghost">
-            Explore Events
+          <a data-morph-control href={`${BASE}#events`} className="e27-btn e27-btn-ghost">
+            <span data-morph-text>Explore Events</span>
           </a>
         </div>
 
       </div>
+      </HeroMorph>
     </section>
   );
 }

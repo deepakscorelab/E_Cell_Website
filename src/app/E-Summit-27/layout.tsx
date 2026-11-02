@@ -5,6 +5,7 @@ import "./e27.css";
 import NavBar27 from "@/components/E-Summit-27/NavBar27";
 import Footer27 from "@/components/E-Summit-27/Footer27";
 import SiteBackground from "@/components/E-Summit-27/SiteBackground";
+import SiteIntro from "@/components/E-Summit-27/SiteIntro";
 import ScrollProgress from "@/components/E-Summit-27/ScrollProgress";
 import { EVENT_DATES } from "@/context/E-Summit-27/constants";
 
@@ -40,7 +41,7 @@ export const viewport: Viewport = {
 export default function ESummit27Layout({ children }: { children: React.ReactNode }) {
   return (
     // Providers (AuthProvider, data context) go here later, wrapping this div.
-    <div className={`e27-root dark ${manrope.variable} ${devanagari.variable}`}>
+    <SiteIntro className={`e27-root dark ${manrope.variable} ${devanagari.variable}`}>
       <SiteBackground />
       <NavBar27 />
       <ScrollProgress />
@@ -48,6 +49,6 @@ export default function ESummit27Layout({ children }: { children: React.ReactNod
         {children}
         <Footer27 />
       </div>
-    </div>
+    </SiteIntro>
   );
 }

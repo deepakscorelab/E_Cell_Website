@@ -3,17 +3,19 @@
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { observeMotionActivity } from "./motionActivity";
+import { useSiteIntro } from "./SiteIntro";
 
 const Cubes = dynamic(() => import("./hero/Cubes"), { ssr: false });
 
 /** One persistent, viewport-sized renderer shared by every 2027 page. */
 export default function SiteCubes() {
+  const { ambientEnabled, ambientDelay } = useSiteIntro();
   const host = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     const el = host.current;
-    if (!el) return;
-    const deadline = performance.now() + 1900;
+    if (!el || !ambientEnabled) return;
+    const deadline = performance.now() + ambientDelay;
     let timer = 0;
     let idle = 0;
     const cancel = () => {
@@ -25,12 +27,12 @@ export default function SiteCubes() {
       if (!active) return;
       timer = window.setTimeout(() => {
         const mount = () => setMounted(true);
-        if (window.requestIdleCallback) idle = window.requestIdleCallback(mount, { timeout: 1000 });
+        if (window.requestIdleCallback) idle = window.requestIdleCallback(mount, { timeout: 300 });
         else mount();
       }, Math.max(0, deadline - performance.now()));
     });
     return () => { cancel(); stop(); };
-  }, []);
+  }, [ambientEnabled, ambientDelay]);
   return (
     <div ref={host} className="e27-site-cubes" aria-hidden="true">
       <div className="e27-cubes-fallback" />

@@ -1,5 +1,5 @@
 /* E-Summit'27 scoped styles. Every class is prefixed e27-; variables live on .e27-root.
-   Animations use transform/opacity only (the grid-floor uses translateY on a pre-tiled layer). */
+   CSS motion uses transform/opacity; the hero uses an instanced React Bits cubes canvas. */
 
 .e27-root {
   --e27-bg: #050008;
@@ -11,9 +11,6 @@
   --e27-text: #ffffff;
   --e27-muted: rgba(255, 255, 255, 0.72);
   --e27-line: rgba(197, 55, 248, 0.22);
-  --e27-tile: 80px; /* grid-floor tile size = loop distance */
-  --px: 0; /* pointer parallax, -1…1, written by Hero */
-  --py: 0;
 
   background: var(--e27-bg);
   color: var(--e27-text);
@@ -177,117 +174,31 @@
   isolation: isolate;
 }
 
-.e27-stage {
-  position: absolute;
-  inset: 0;
-  perspective: 1200px;
-  perspective-origin: 50% 45%;
-}
-
-/* One tilt transform for the whole layer group, driven by --px/--py */
-.e27-tilt {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  transform: rotateX(calc(var(--py) * -2deg)) rotateY(calc(var(--px) * 3deg));
-  will-change: transform; /* moving layer 1 */
-}
-
-.e27-glow {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(45% 38% at 50% 58%, rgba(144, 48, 240, 0.35), transparent 70%),
-    radial-gradient(70% 50% at 50% 100%, rgba(98, 17, 191, 0.45), transparent 75%),
-    radial-gradient(30% 25% at 50% 38%, rgba(197, 55, 248, 0.18), transparent 70%);
-  pointer-events: none;
-}
-
-/* Static "fake bloom" over the canvas — never animated */
-.e27-bloom {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(28% 30% at 50% 45%, rgba(208, 112, 240, 0.28), transparent 70%);
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
-
-/* ---- Synthwave floor: bottom ~45%, rotated plane, pre-tiled track moved by translateY ---- */
-.e27-floor-wrap {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 45%;
-  perspective: 600px;
-  perspective-origin: 50% 0%;
-  overflow: hidden;
-  pointer-events: none;
-}
-.e27-floor {
-  position: absolute;
-  left: -60%;
-  width: 220%;
-  top: 0;
-  height: 260%;
-  transform-origin: 50% 0%;
-  transform: rotateX(65deg);
-  overflow: hidden;
-}
-.e27-floor-track {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(var(--e27-tile) * -1);
-  bottom: 0;
-  background-image:
-    linear-gradient(to right, rgba(197, 55, 248, 0.55) 1.5px, transparent 1.5px),
-    linear-gradient(to bottom, rgba(197, 55, 248, 0.55) 1.5px, transparent 1.5px);
-  background-size: var(--e27-tile) var(--e27-tile);
-  animation: e27-floor-move 1.6s linear infinite;
-  will-change: transform; /* moving layer 2 */
-}
-@keyframes e27-floor-move {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(0, var(--e27-tile), 0); } /* exactly one tile → seamless loop */
-}
-/* fade the floor into black at the horizon */
-.e27-floor-fade {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, var(--e27-bg) 0%, rgba(5, 0, 8, 0.6) 30%, transparent 65%);
-}
-.e27-horizon {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 45%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--e27-magenta), transparent);
-  opacity: 0.7;
-}
-
-/* ---- WebGL canvas layer ---- */
-.e27-canvas-layer {
+.e27-cubes-stage {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.9s ease;
 }
-.e27-canvas-layer[data-ready="true"] {
-  opacity: 1;
+.e27-cubes-fallback {
+  position: absolute;
+  inset: 0;
+  opacity: 0.25;
+  background: repeating-linear-gradient(30deg, transparent 0 64px, #9030f0 65px 66px, transparent 67px 130px),
+    repeating-linear-gradient(150deg, transparent 0 64px, #6211bf 65px 66px, transparent 67px 130px);
+  mask-image: radial-gradient(ellipse, transparent 15%, #000 90%);
 }
-.e27-canvas-layer canvas {
-  width: 100% !important;
-  height: 100% !important; /* CSS upscales the reduced render-scale buffer */
-  display: block;
+.e27-cubes-stage .e27-cubes-field {
+  position: absolute;
+  inset: 0;
+  opacity: 0.75;
 }
-
-/* ---- Parallax depth helper: --d = pixels at full pointer deflection ---- */
-.e27-depth {
-  transform: translate3d(calc(var(--px) * var(--d, 10) * 1px), calc(var(--py) * var(--d, 10) * 1px), 0);
+.e27-cubes-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 42%, rgba(5, 0, 8, 0.83), rgba(5, 0, 8, 0.12) 70%),
+    linear-gradient(0deg, #050008, transparent 18%, transparent 85%, rgba(5, 0, 8, 0.6));
 }
+.e27-hero-flame { pointer-events: none; }
 
 /* Static glow parent (filter is NOT animated; child floats inside) */
 .e27-flame-glow {
@@ -376,11 +287,6 @@
    Reduced motion: stop everything decorative
    ===================================================================== */
 @media (prefers-reduced-motion: reduce) {
-  .e27-root {
-    --px: 0 !important;
-    --py: 0 !important;
-  }
-  .e27-floor-track,
   .e27-flame-float,
   .e27-ignite,
   .e27-rise,
@@ -396,13 +302,11 @@
   }
   .e27-tilt-card,
   .e27-btn,
-  .e27-mobile-panel,
-  .e27-canvas-layer {
+  .e27-mobile-panel {
     transition: none !important;
   }
 }
 /* Decorative loops sleep while off-screen or in a background tab. */
-.e27-hero[data-motion-paused="true"] .e27-floor-track,
 .e27-hero[data-motion-paused="true"] .e27-flame-float,
 .e27t-hero[data-motion-paused="true"] .e27t-hero-flame {
   animation-play-state: paused;

@@ -50,16 +50,13 @@ export default function NavBar27() {
       >
         <Link href={BASE} className="flex items-center gap-2.5" aria-label="E-Summit 27 home">
           <img
-            src={asset("flame-logo.webp")}
+            src={asset("esummit27-wordmark.webp")}
             alt=""
-            width={20}
-            height={32}
+            width={1218}
+            height={219}
             decoding="async"
-            className="h-8 w-auto"
+            className="h-auto w-[154px] sm:w-[178px]"
           />
-          <span className="text-sm font-semibold tracking-[0.22em] text-white">
-            E-SUMMIT <span className="e27-accent">27</span>
-          </span>
         </Link>
 
         <ul className="hidden items-center gap-1 lg:flex">

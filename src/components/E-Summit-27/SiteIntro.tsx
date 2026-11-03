@@ -138,7 +138,7 @@ export default function SiteIntro({ children, className }: { children: ReactNode
   const ambientEnabled = phase === "background" || phase === "complete";
   return <IntroContext.Provider value={{ phase, ambientEnabled, ambientDelay: firstPath.current === BASE ? 0 : 1900, completeMorph }}>
     <div ref={hostRef} className={className} data-intro={phase}>
-      <noscript><style>{`.e27-root[data-intro] .e27-site-artwork,.e27-root[data-intro] .e27-hero-morph-content,.e27-root[data-intro] .e27-ambient-layer,.e27-root[data-intro] .e27-fire-panel{opacity:1!important}.e27-root[data-intro] .e27-site-artwork{transform:none!important}.e27-hero-morph-canvas{display:none!important}@media(max-width:640px){.e27-root[data-intro] .e27-fire-panel{opacity:.75!important}}`}</style></noscript>
+      <noscript><style>{`.e27-root[data-intro] .e27-site-artwork,.e27-root[data-intro] .e27-hero-morph-content,.e27-root[data-intro] .e27-ambient-layer,.e27-root[data-intro] .e27-site-lightning,.e27-root[data-intro] .e27-fire-panel{opacity:1!important}.e27-root[data-intro] .e27-site-artwork{transform:none!important}.e27-hero-morph-canvas{display:none!important}@media(max-width:640px){.e27-root[data-intro] .e27-fire-panel{opacity:.75!important}}`}</style></noscript>
       {children}
     </div>
   </IntroContext.Provider>;

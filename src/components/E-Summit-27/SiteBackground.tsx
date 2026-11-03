@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import SiteCubes from "./SiteCubes";
+import SiteLightning from "./SiteLightning";
 import { observeMotionActivity } from "./motionActivity";
 import { asset } from "@/context/E-Summit-27/constants";
 
@@ -19,7 +19,6 @@ export default function SiteBackground() {
   return (
     <div ref={host} className="e27-site-background" aria-hidden="true">
       <div className="e27-ambient-layer">
-        <SiteCubes />
         <div className="e27-floor-wrap">
           <div className="e27-floor"><div className="e27-floor-track" /></div>
         </div>
@@ -35,6 +34,7 @@ export default function SiteBackground() {
           fetchPriority="high"
         />
       </div>
+      <SiteLightning />
     </div>
   );
 }

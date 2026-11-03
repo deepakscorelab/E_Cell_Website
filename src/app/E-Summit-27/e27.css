@@ -1,5 +1,5 @@
 /* E-Summit'27 scoped styles. Every class is prefixed e27-; variables live on .e27-root.
-   CSS motion uses transform/opacity; all pages share an instanced React Bits cubes canvas. */
+   CSS motion uses transform/opacity; all pages share a transparent React Bits Lightning canvas. */
 
 .e27-root {
   --e27-font-heading: var(--e27-font-body);
@@ -261,26 +261,29 @@
   isolation: isolate;
   pointer-events: none;
 }
-.e27-site-cubes {
+.e27-site-lightning {
   position: absolute;
-  z-index: 0;
+  z-index: 3;
   inset: 0;
   pointer-events: none;
+  transition: opacity 650ms ease;
 }
-.e27-cubes-fallback {
+.e27-lightning-fallback {
   position: absolute;
   inset: 0;
-  opacity: 0.18;
-  background: repeating-linear-gradient(30deg, transparent 0 64px, #9030f0 65px 66px, transparent 67px 130px),
-    repeating-linear-gradient(150deg, transparent 0 64px, #6211bf 65px 66px, transparent 67px 130px);
+  width: 100%;
+  height: 100%;
+  color: #b840f9;
+  opacity: 0.24;
+  stroke-width: 1.5;
 }
-.e27-site-cubes .e27-cubes-field {
+.e27-lightning-fallback-glow { stroke-width: 10; opacity: 0.12; }
+.e27-site-lightning .e27-lightning-field {
   position: absolute;
   inset: 0;
-  opacity: 0.44;
 }
-/* The static placeholder must not add another grid over the live cubes. */
-.e27-site-cubes:has(.e27-cubes-field[data-ready="true"]) .e27-cubes-fallback {
+/* Static transparent bolts remain available without WebGL or motion. */
+.e27-site-lightning:has(.e27-lightning-field[data-ready="true"]) .e27-lightning-fallback {
   visibility: hidden;
 }
 .e27-hero-flame { pointer-events: none; }
@@ -313,7 +316,7 @@
 @media (prefers-reduced-motion: no-preference) {
   .e27-root:is([data-intro="prepare"], [data-intro="pillars"], [data-intro="morph"]) .e27-hero-morph-content { opacity: 0; }
   .e27-root[data-intro="prepare"] .e27-site-artwork { opacity: 0; transform: translate3d(0, -105vh, 0); }
-  .e27-root:is([data-intro="prepare"], [data-intro="pillars"], [data-intro="morph"]) :is(.e27-ambient-layer, .e27-fire-panel) { opacity: 0; }
+  .e27-root:is([data-intro="prepare"], [data-intro="pillars"], [data-intro="morph"]) :is(.e27-ambient-layer, .e27-site-lightning, .e27-fire-panel) { opacity: 0; }
   .e27-root:is([data-intro="prepare"], [data-intro="pillars"], [data-intro="morph"]) .e27-floor-track { animation-play-state: paused; }
   .e27-root:is([data-intro="prepare"], [data-intro="pillars"], [data-intro="morph"]) .e27-flame-float { animation: none; transform: none; }
   .e27-root:is([data-intro="prepare"], [data-intro="pillars"], [data-intro="morph"]) .e27-flame-glow::before { opacity: 0; }
@@ -321,7 +324,7 @@
 @media (prefers-reduced-motion: reduce) {
   .e27-hero-morph-canvas { display: none; }
   .e27-hero-morph-content { opacity: 1 !important; }
-  .e27-ambient-layer { transition: none; }
+  .e27-ambient-layer, .e27-site-lightning { transition: none; }
 }
 
 /* Moving flames at the sides' center; the E-shaped brand mark stays above the title. */
@@ -478,7 +481,7 @@
   transform: translateY(var(--e27-reveal-y, 24px));
   transition: none;
 }
-/* An opacity-animated ancestor isolates backdrop-filter from the cubes.
+/* An opacity-animated ancestor isolates backdrop-filter from the shared backdrop.
    Glass still slides into view; only non-glass content uses the fade. */
 .e27-reveal:has(.e27-card, .e27-glass) {
   opacity: 1;

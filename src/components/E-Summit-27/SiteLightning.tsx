@@ -7,7 +7,7 @@ import { useSiteIntro } from "./SiteIntro";
 
 const Lightning = dynamic(() => import("./hero/Lightning"), { ssr: false });
 
-/** One transparent renderer above the campus artwork, shared by all 2027 routes. */
+/** One transparent renderer behind the campus artwork, shared by all 2027 routes. */
 export default function SiteLightning() {
   const { ambientEnabled, ambientDelay } = useSiteIntro();
   const host = useRef<HTMLDivElement>(null);
@@ -46,7 +46,7 @@ export default function SiteLightning() {
       </svg>
       {mounted && <Lightning color="#b840f9" bolts={2} spread={1.2} branches={0.35}
         thickness={0.65} glow={0.65} intensity={0.8} speed={0.45} flicker={0.12}
-        opacity={0.7} className="e27-lightning-field" />}
+        opacity={0.7} clickStrike className="e27-lightning-field" />}
     </div>
   );
 }

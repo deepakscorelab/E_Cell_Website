@@ -3,11 +3,12 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { observeMotionActivity } from '../motionActivity';
 import { FrameClock } from './firePerformance';
+import { LightningStrikes, MAX_LIGHTNING_STRIKES } from './lightningStrikes';
 
 import './Lightning.css';
 
 const MAX_BOLTS = 4;
-const MAX_STRIKES = 4;
+const MAX_STRIKES = MAX_LIGHTNING_STRIKES;
 
 const VERTEX = `#version 300 es
 in vec2 aPosition;
@@ -294,6 +295,7 @@ interface LightningProps {
   intensity?: number;
   speed?: number;
   flicker?: number;
+  clickStrike?: boolean;
   fade?: number;
   opacity?: number;
   paused?: boolean;
@@ -331,7 +333,8 @@ const UNIFORMS = [
  * React Bits Lightning shader by David Haz (see Lightning.LICENSE.md).
  * https://github.com/DavidHDev/react-bits/blob/main/src/ts-default/Backgrounds/Lightning/Lightning.tsx
  * Local renderer: transparent output, bounded resolution, 30 fps, visibility/
- * reduced-motion pause, context recovery, no pointer handlers or click flashes.
+ * reduced-motion pause and context recovery. Click strikes use a fixed pool;
+ * a passive window listener leaves native links, touch and controls usable.
  */
 export default function Lightning({
   color = '#9030f0',
@@ -346,6 +349,7 @@ export default function Lightning({
   intensity = 0.65,
   speed = 0.6,
   flicker = 0.12,
+  clickStrike = true,
   fade = 0,
   opacity = 0.72,
   paused = false,
@@ -355,11 +359,12 @@ export default function Lightning({
 }: LightningProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const refreshRef = useRef<(() => void) | null>(null);
+  const strikeCountRef = useRef(0);
   const [contextVersion, setContextVersion] = useState(0);
   const settingsRef = useRef({ color, bolts, spread, branches, xOffset, angle, size,
-    thickness, glow, intensity, speed, flicker, fade, opacity, paused, dpr });
+    thickness, glow, intensity, speed, flicker, clickStrike, fade, opacity, paused, dpr });
   settingsRef.current = { color, bolts, spread, branches, xOffset, angle, size,
-    thickness, glow, intensity, speed, flicker, fade, opacity, paused, dpr };
+    thickness, glow, intensity, speed, flicker, clickStrike, fade, opacity, paused, dpr };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -402,7 +407,9 @@ export default function Lightning({
       return;
     }
     const uniforms = Object.fromEntries(UNIFORMS.map(name => [name, context.getUniformLocation(program, name)]));
-    const emptyStrikes = new Float32Array(MAX_STRIKES * 4);
+    const strikes = new LightningStrikes();
+    const strikeData = new Float32Array(MAX_STRIKES * 4);
+    const infoData = new Float32Array(MAX_STRIKES * 4);
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
     const frameClock = new FrameClock(30);
     let active = false;
@@ -435,7 +442,7 @@ export default function Lightning({
       }
     };
 
-    const draw = () => {
+    const draw = (now = performance.now()) => {
       if (disposed || contextLost || document.hidden) return;
       const s = settingsRef.current;
       if (colorKey !== s.color) { colorKey = s.color; rgb = toRgb(s.color); }
@@ -460,11 +467,12 @@ export default function Lightning({
       // Shader coordinates use viewport height; keep both lanes on narrow screens.
       context.uniform1f(uniforms.uSpread, s.spread * Math.min(1, canvas.width / canvas.height));
       context.uniform1i(uniforms.uBolts, Math.min(MAX_BOLTS, Math.max(1, Math.round(s.bolts))));
-      // Keep the original transparent shader; interactive uniforms remain inert.
+      const flash = strikes.writeUniforms(now, strikeData, infoData);
+      // Hover-following stays off; click strikes use the original shader inputs.
       context.uniform4f(uniforms.uPointer, 0, 0, 0, 0);
-      context.uniform4fv(uniforms.uStrikes, emptyStrikes);
-      context.uniform4fv(uniforms.uStrikeInfo, emptyStrikes);
-      context.uniform1f(uniforms.uFlash, 0);
+      context.uniform4fv(uniforms.uStrikes, strikeData);
+      context.uniform4fv(uniforms.uStrikeInfo, infoData);
+      context.uniform1f(uniforms.uFlash, flash);
       context.uniform1f(uniforms.uIntro, 1);
       context.uniform1f(uniforms.uLight, 0);
       context.uniform1f(uniforms.uFade, Math.min(1, Math.max(0, s.fade)));
@@ -473,8 +481,10 @@ export default function Lightning({
       if (canvas.dataset.ready !== 'true') canvas.dataset.ready = 'true';
     };
 
-    const canAnimate = () => active && !disposed && !contextLost &&
-      !document.hidden && !reduce.matches && !settingsRef.current.paused && settingsRef.current.speed > 0;
+    const canRun = () => active && !disposed && !contextLost &&
+      !document.hidden && !reduce.matches && !settingsRef.current.paused;
+    const canAnimate = (now = performance.now()) => canRun() &&
+      (settingsRef.current.speed > 0 || strikes.hasActive(now));
 
     const stop = () => {
       cancelAnimationFrame(raf);
@@ -487,11 +497,12 @@ export default function Lightning({
 
     const frame = (now: number) => {
       raf = 0;
-      if (!canAnimate()) { stop(); return; }
+      if (!canRun()) { stop(); return; }
       const delta = frameClock.advance(now);
+      if (delta === null) { raf = requestAnimationFrame(frame); return; }
       if (delta !== null) {
         phase = (phase + (Math.min(delta, 100) / 1000 * Math.max(0, settingsRef.current.speed)) / 10) % 1;
-        draw();
+        draw(now);
         // Sustained slow frames reduce pixel work rather than speeding up time.
         if (warmup > 0) warmup--;
         else {
@@ -505,7 +516,9 @@ export default function Lightning({
           }
         }
       }
-      raf = requestAnimationFrame(frame);
+      // Always draw the final empty strike frame, including when ambient speed=0.
+      if (canAnimate(now)) raf = requestAnimationFrame(frame);
+      else stop();
     };
 
     const wake = () => {
@@ -515,15 +528,36 @@ export default function Lightning({
     };
 
     const refresh = () => {
+      if (settingsRef.current.paused || !settingsRef.current.clickStrike || reduce.matches) strikes.clear();
       resize();
       // A single settled frame remains readable under reduced motion or pause.
       if (!document.hidden) draw();
       wake();
     };
 
+    const onPointerDown = (event: PointerEvent) => {
+      if (!settingsRef.current.clickStrike || !canRun() || event.button !== 0 || !event.isPrimary) return;
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) return;
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      if (x < 0 || y < 0 || x > rect.width || y > rect.height) return;
+      const ux = (2 * x - rect.width) / rect.height;
+      const uy = (rect.height - 2 * y) / rect.height;
+      const radians = settingsRef.current.angle * Math.PI / 180;
+      const sin = Math.sin(radians);
+      const cos = Math.cos(radians);
+      const top = rect.width / rect.height * Math.abs(sin) + Math.abs(cos);
+      strikes.add({ x: ux, y: uy, reach: top - (-sin * ux + cos * uy) + 0.2,
+        seed: Math.random() * 100 }, performance.now());
+      canvas.dataset.strikeCount = String(++strikeCountRef.current);
+      wake();
+    };
+
     const onContextLost = (event: Event) => {
       event.preventDefault();
       contextLost = true;
+      strikes.clear();
       delete canvas.dataset.ready;
       stop();
     };
@@ -532,11 +566,13 @@ export default function Lightning({
     };
     canvas.addEventListener('webglcontextlost', onContextLost);
     canvas.addEventListener('webglcontextrestored', onContextRestored);
+    window.addEventListener('pointerdown', onPointerDown, { passive: true });
     const resizeObserver = new ResizeObserver(refresh);
     resizeObserver.observe(canvas);
     const stopActivity = observeMotionActivity(canvas, next => {
       active = next;
       if (!next) {
+        strikes.clear();
         stop();
         if (reduce.matches && !document.hidden) draw();
       } else {
@@ -555,6 +591,7 @@ export default function Lightning({
       delete canvas.dataset.ready;
       resizeObserver.disconnect();
       stopActivity();
+      window.removeEventListener('pointerdown', onPointerDown);
       canvas.removeEventListener('webglcontextlost', onContextLost);
       canvas.removeEventListener('webglcontextrestored', onContextRestored);
       context.deleteBuffer(buffer);
@@ -563,9 +600,9 @@ export default function Lightning({
   }, [contextVersion]);
 
   useEffect(() => { refreshRef.current?.(); }, [color, bolts, spread, branches,
-    xOffset, angle, size, thickness, glow, intensity, speed, flicker, fade, opacity, paused, dpr]);
+    xOffset, angle, size, thickness, glow, intensity, speed, flicker, clickStrike, fade, opacity, paused, dpr]);
 
   return <canvas ref={canvasRef} className={`e27-lightning-canvas ${className}`.trim()}
-    style={style} aria-hidden="true" data-effect="react-bits-lightning" />;
+    style={style} aria-hidden="true" data-effect="react-bits-lightning" data-strike-count="0" />;
 }
 

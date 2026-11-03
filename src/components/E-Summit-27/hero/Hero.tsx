@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import { CalendarDays, MapPin } from "lucide-react";
 import { observeMotionActivity } from "../motionActivity";
-import FlamePanel from "./FlamePanel";
 import HeroMorph from "./HeroMorph";
 import RegistrationSpark from "./RegistrationSpark";
 import { useSiteIntro } from "../SiteIntro";
@@ -26,8 +25,6 @@ export default function Hero() {
 
   return (
     <section ref={heroRef} className="e27-hero" aria-labelledby="e27-hero-title">
-      <FlamePanel side="left" />
-      <FlamePanel side="right" />
       {/* ---------- content ---------- */}
       <HeroMorph active={phase === "morph"} onComplete={completeMorph}>
       <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-5xl flex-col items-center justify-center px-4 pb-44 pt-32 text-center sm:pb-40 lg:pb-36">
